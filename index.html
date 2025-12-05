@@ -318,11 +318,12 @@
                 width: 40px !important;
                 height: 40px !important;
                 font-size: 1.2rem !important;
+                top: 80px !important;
             }
             
             #hud {
                 font-size: 0.9rem;
-                top: 60px !important;
+                top: 80px !important;
             }
             
             #instructions {
@@ -389,6 +390,8 @@
         </div>
         
         <div id="start-screen" class="screen">
+            <button onclick="window.history.back()" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7); border: 2px solid #4a4a4a; border-radius: 8px; color: white; padding: 10px 20px; cursor: pointer; font-size: 1rem; font-weight: bold;">← BACK</button>
+            
             <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 250px; max-height: 150px; margin-bottom: 10px;">
             <h1 class="screen-title" style="font-size: 2.5rem; margin-bottom: 10px;">ZOMBIE SURVIVAL</h1>
             <p class="screen-subtitle" style="font-size: 1rem; margin-bottom: 15px;">Survive 5 stages of zombies</p>
@@ -412,6 +415,7 @@
                 <div><span>Next Wave:</span><span id="next-stage-zombies">300</span></div>
             </div>
             <button id="next-stage-btn" class="btn">NEXT STAGE</button>
+            <button onclick="window.history.back()" class="btn" style="background: linear-gradient(to bottom, #4a4a4a, #2a2a2a); border-color: #666; margin-top: 10px;">← BACK TO GAMES</button>
         </div>
         
         <div id="game-over-screen" class="screen hidden">
@@ -423,6 +427,7 @@
                 <div><span>Ammo:</span><span id="final-ammo">0</span></div>
             </div>
             <button id="restart-btn" class="btn">RESTART</button>
+            <button onclick="window.history.back()" class="btn" style="background: linear-gradient(to bottom, #4a4a4a, #2a2a2a); border-color: #666; margin-top: 10px;">← BACK TO GAMES</button>
         </div>
         
         <div id="pause-screen" class="screen hidden">
@@ -436,6 +441,7 @@
             </div>
             <button id="resume-btn" class="btn">RESUME</button>
             <button id="quit-btn" class="btn" style="background: linear-gradient(to bottom, #666, #444); border-color: #888;">QUIT TO MENU</button>
+            <button onclick="window.history.back()" class="btn" style="background: linear-gradient(to bottom, #4a4a4a, #2a2a2a); border-color: #666; margin-top: 10px;">← BACK TO GAMES</button>
         </div>
         
         <!-- Mobile Controls -->
@@ -807,8 +813,9 @@
             
             let joystickActive = false;
             let joystickId = null;
-            let joystickStartX = 0;
-            let joystickStartY = 0;
+            let joystickCenterX = 0;
+            let joystickCenterY = 0;
+            let moveDirection = { x: 0, y: 0 };
             
             joystickArea.addEventListener('touchstart', (e) => {
                 if (!gameState.gameRunning || gameState.isPaused) return;
@@ -816,8 +823,8 @@
                 joystickActive = true;
                 joystickId = e.changedTouches[0].identifier;
                 const rect = joystickArea.getBoundingClientRect();
-                joystickStartX = rect.left + rect.width / 2;
-                joystickStartY = rect.top + rect.height / 2;
+                joystickCenterX = rect.left + rect.width / 2;
+                joystickCenterY = rect.top + rect.height / 2;
             });
             
             joystickArea.addEventListener('touchmove', (e) => {
@@ -826,10 +833,10 @@
                 
                 for (let touch of e.changedTouches) {
                     if (touch.identifier === joystickId) {
-                        const deltaX = touch.clientX - joystickStartX;
-                        const deltaY = touch.clientY - joystickStartY;
+                        const deltaX = touch.clientX - joystickCenterX;
+                        const deltaY = touch.clientY - joystickCenterY;
                         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                        const maxDistance = 45;
+                        const maxDistance = 60;
                         
                         let moveX = deltaX;
                         let moveY = deltaY;
@@ -841,13 +848,16 @@
                         
                         joystickStick.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
                         
-                        // Update player movement
-                        const angle = Math.atan2(deltaY, deltaX);
-                        const strength = Math.min(distance / maxDistance, 1);
-                        player.x += Math.cos(angle) * player.speed * strength;
-                        player.y += Math.sin(angle) * player.speed * strength;
-                        player.x = Math.max(player.size, Math.min(CONFIG.CANVAS_WIDTH - player.size, player.x));
-                        player.y = Math.max(player.size, Math.min(CONFIG.CANVAS_HEIGHT - player.size, player.y));
+                        // Store movement direction for continuous movement
+                        if (distance > 5) {
+                            moveDirection.x = deltaX / distance;
+                            moveDirection.y = deltaY / distance;
+                            moveDirection.strength = Math.min(distance / maxDistance, 1);
+                        } else {
+                            moveDirection.x = 0;
+                            moveDirection.y = 0;
+                            moveDirection.strength = 0;
+                        }
                         
                         break;
                     }
@@ -860,10 +870,38 @@
                         joystickActive = false;
                         joystickId = null;
                         joystickStick.style.transform = 'translate(-50%, -50%)';
+                        moveDirection.x = 0;
+                        moveDirection.y = 0;
+                        moveDirection.strength = 0;
                         break;
                     }
                 }
             });
+            
+            // Apply continuous movement in update loop
+            window.applyJoystickMovement = function() {
+                if (moveDirection.strength > 0 && gameState.gameRunning && !gameState.isPaused) {
+                    const newX = player.x + moveDirection.x * player.speed * moveDirection.strength;
+                    const newY = player.y + moveDirection.y * player.speed * moveDirection.strength;
+                    
+                    // Check building collision
+                    if (!checkBuildingCollision(newX, newY, player.size)) {
+                        player.x = newX;
+                        player.y = newY;
+                    } else {
+                        // Try sliding along walls
+                        if (!checkBuildingCollision(newX, player.y, player.size)) {
+                            player.x = newX;
+                        } else if (!checkBuildingCollision(player.x, newY, player.size)) {
+                            player.y = newY;
+                        }
+                    }
+                    
+                    // Keep player in bounds
+                    player.x = Math.max(player.size, Math.min(CONFIG.CANVAS_WIDTH - player.size, player.x));
+                    player.y = Math.max(player.size, Math.min(CONFIG.CANVAS_HEIGHT - player.size, player.y));
+                }
+            };
             
             // Shoot button
             shootButton.addEventListener('touchstart', (e) => {
@@ -1105,6 +1143,9 @@
 
         function update() {
             updatePlayer();
+            if (window.applyJoystickMovement) {
+                window.applyJoystickMovement();
+            }
             updateZombies();
             updateBoss();
             updateAmmo();
