@@ -919,6 +919,14 @@
                 }
             });
             
+            // Prevent page visibility from stopping the game
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && gameState.gameRunning && !gameState.isPaused) {
+                    // Resume game loop if it stopped
+                    requestAnimationFrame(gameLoop);
+                }
+            });
+            
             // Mobile joystick controls
             setupMobileControls();
         }
@@ -1076,6 +1084,21 @@
             updateLivesDisplay();
             setupEvents();
             
+            // Prevent mobile from sleeping/pausing
+            if ('wakeLock' in navigator) {
+                navigator.wakeLock.request('screen').catch(err => {
+                    console.log('Wake lock not supported:', err);
+                });
+            }
+            
+            // Keep screen active on mobile
+            let keepAliveInterval = setInterval(() => {
+                if (gameState.gameRunning && !gameState.isPaused) {
+                    // Dummy operation to keep JS active
+                    const dummy = Date.now();
+                }
+            }, 5000);
+            
             // Check for save data
             const saveData = loadGame();
             const continueBtn = document.getElementById('continue-btn');
@@ -1228,49 +1251,58 @@
         }
 
         function gameLoop() {
-            if (gameState.gameRunning && !gameState.gameOver && !gameState.stageComplete && !gameState.isPaused) {
-                update();
-                draw();
-                
-                // Check stage completion - only count non-ghost zombies
-                const nonGhostZombies = zombies.filter(z => !z.isGhost);
-                const regularZombiesGone = gameState.zombiesLeft <= 0 && nonGhostZombies.length === 0;
-                const bossDefeated = !gameState.bossActive || bosses.length === 0;
-                
-                if (regularZombiesGone && bossDefeated) {
-                    completeStage();
+            try {
+                if (gameState.gameRunning && !gameState.gameOver && !gameState.stageComplete && !gameState.isPaused) {
+                    update();
+                    draw();
+                    
+                    // Check stage completion - only count non-ghost zombies
+                    const nonGhostZombies = zombies.filter(z => !z.isGhost);
+                    const regularZombiesGone = gameState.zombiesLeft <= 0 && nonGhostZombies.length === 0;
+                    const bossDefeated = !gameState.bossActive || bosses.length === 0;
+                    
+                    if (regularZombiesGone && bossDefeated) {
+                        completeStage();
+                    }
+                    
+                    // Spawn regular zombies
+                    if (gameState.zombiesLeft > 0 && zombies.length < 50 && Math.random() < 0.05) {
+                        spawnZombie();
+                    }
+                    
+                    // Spawn ghost zombies periodically (10% chance when spawning)
+                    if (zombies.length < 50 && Math.random() < 0.01) {
+                        const ghostType = Math.random() < 0.5 ? 8 : 9;
+                        spawnGhostZombie(ghostType);
+                    }
+                } else if (gameState.isPaused) {
+                    // Still draw when paused
+                    draw();
                 }
-                
-                // Spawn regular zombies
-                if (gameState.zombiesLeft > 0 && zombies.length < 50 && Math.random() < 0.05) {
-                    spawnZombie();
-                }
-                
-                // Spawn ghost zombies periodically (10% chance when spawning)
-                if (zombies.length < 50 && Math.random() < 0.01) {
-                    const ghostType = Math.random() < 0.5 ? 8 : 9;
-                    spawnGhostZombie(ghostType);
-                }
-            } else if (gameState.isPaused) {
-                // Still draw when paused
-                draw();
+            } catch (err) {
+                console.error('Game loop error:', err);
+                // Continue running even if error occurs
             }
             requestAnimationFrame(gameLoop);
         }
 
         function update() {
-            updatePlayer();
-            if (window.applyJoystickMovement) {
-                window.applyJoystickMovement();
-            }
-            updateZombies();
-            updateBoss();
-            updateAmmo();
-            updateBulletTraces();
-            updateHUD();
-            if (gameState.isInvincible && Date.now() - gameState.lastHitTime > CONFIG.INVINCIBILITY_TIME) {
-                gameState.isInvincible = false;
-            }
+            try { updatePlayer(); } catch (e) { console.error('updatePlayer error:', e); }
+            try {
+                if (window.applyJoystickMovement) {
+                    window.applyJoystickMovement();
+                }
+            } catch (e) { console.error('applyJoystickMovement error:', e); }
+            try { updateZombies(); } catch (e) { console.error('updateZombies error:', e); }
+            try { updateBoss(); } catch (e) { console.error('updateBoss error:', e); }
+            try { updateAmmo(); } catch (e) { console.error('updateAmmo error:', e); }
+            try { updateBulletTraces(); } catch (e) { console.error('updateBulletTraces error:', e); }
+            try { updateHUD(); } catch (e) { console.error('updateHUD error:', e); }
+            try {
+                if (gameState.isInvincible && Date.now() - gameState.lastHitTime > CONFIG.INVINCIBILITY_TIME) {
+                    gameState.isInvincible = false;
+                }
+            } catch (e) { console.error('invincibility error:', e); }
         }
 
         function updateBoss() {
@@ -1664,26 +1696,30 @@
             
             // Mobile auto-aim indicator
             if (window.innerWidth <= 768) {
-                const target = findNearestZombie();
-                if (target) {
-                    const screenX = (target.x - camX) * gameState.zoom + canvas.width / 2;
-                    const screenY = (target.y - camY) * gameState.zoom + canvas.height / 2;
-                    
-                    ctx.strokeStyle = '#ff0000';
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, 40, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    // Crosshair on target
-                    ctx.strokeStyle = '#ff0000';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(screenX - 15, screenY);
-                    ctx.lineTo(screenX + 15, screenY);
-                    ctx.moveTo(screenX, screenY - 15);
-                    ctx.lineTo(screenX, screenY + 15);
-                    ctx.stroke();
+                try {
+                    const target = findNearestZombie();
+                    if (target && typeof target.x === 'number' && typeof target.y === 'number') {
+                        const screenX = (target.x - camX) * gameState.zoom + canvas.width / 2;
+                        const screenY = (target.y - camY) * gameState.zoom + canvas.height / 2;
+                        
+                        ctx.strokeStyle = '#ff0000';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(screenX, screenY, 40, 0, Math.PI * 2);
+                        ctx.stroke();
+                        
+                        // Crosshair on target
+                        ctx.strokeStyle = '#ff0000';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(screenX - 15, screenY);
+                        ctx.lineTo(screenX + 15, screenY);
+                        ctx.moveTo(screenX, screenY - 15);
+                        ctx.lineTo(screenX, screenY + 15);
+                        ctx.stroke();
+                    }
+                } catch (err) {
+                    // Silently fail if target indicator has issues
                 }
             }
         }
@@ -1744,11 +1780,15 @@
         }
 
         function findNearestZombie() {
+            if (!zombies || !Array.isArray(zombies)) return null;
+            
             let nearest = null;
             let minDist = Infinity;
             
             // Check all zombies
             for (const z of zombies) {
+                if (!z || typeof z.x !== 'number' || typeof z.y !== 'number') continue;
+                
                 const dx = z.x - player.x;
                 const dy = z.y - player.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -1760,8 +1800,10 @@
             }
             
             // Check all bosses
-            if (gameState.bossActive) {
+            if (gameState.bossActive && bosses && Array.isArray(bosses)) {
                 for (const boss of bosses) {
+                    if (!boss || typeof boss.x !== 'number' || typeof boss.y !== 'number') continue;
+                    
                     const dx = boss.x - player.x;
                     const dy = boss.y - player.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
@@ -1777,13 +1819,18 @@
         }
 
         function autoAimAndShoot() {
-            const target = findNearestZombie();
-            if (target) {
-                const dx = target.x - player.x;
-                const dy = target.y - player.y;
-                player.angle = Math.atan2(dy, dx);
+            try {
+                const target = findNearestZombie();
+                if (target && typeof target.x === 'number' && typeof target.y === 'number') {
+                    const dx = target.x - player.x;
+                    const dy = target.y - player.y;
+                    player.angle = Math.atan2(dy, dx);
+                }
+                shoot();
+            } catch (err) {
+                console.error('Auto-aim error:', err);
+                shoot(); // Shoot anyway even if auto-aim fails
             }
-            shoot();
         }
 
         function playShotgunSound() {
