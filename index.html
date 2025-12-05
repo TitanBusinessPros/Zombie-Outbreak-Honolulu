@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombie City Survival</title>
+    <link rel="icon" type="image/png" href="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #game-canvas {
+            display: block;
+            background: #1a3a1a;
+        }
+        
+        #game-ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        #hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #4a4a4a;
+            pointer-events: auto;
+            min-width: 220px;
+        }
+        
+        #hud h2 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .hud-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .hud-value {
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+        
+        #ammo-count {
+            color: #ffd166;
+        }
+        
+        #lives-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            align-items: center;
+        }
+        
+        .life-heart {
+            color: #ff6b6b;
+            font-size: 1.5rem;
+        }
+        
+        .life-heart.empty {
+            color: #555;
+        }
+        
+        #weapon-info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #4a4a4a;
+            pointer-events: auto;
+            text-align: center;
+        }
+        
+        #weapon-name {
+            color: #ffd166;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        #zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+        }
+        
+        .zoom-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 8px;
+            border: 2px solid #666;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        #instructions {
+            position: absolute;
+            top: 80px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid #4a4a4a;
+            max-width: 300px;
+            pointer-events: auto;
+        }
+        
+        #instructions h3 {
+            color: #4ecdc4;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        #instructions p {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+        
+        #save-indicator {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(78, 205, 196, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 300;
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .screen-title {
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.7);
+        }
+        
+        .screen-subtitle {
+            font-size: 1.2rem;
+            color: #4ecdc4;
+            margin-bottom: 20px;
+            max-width: 800px;
+            line-height: 1.5;
+        }
+        
+        .screen-stats {
+            background: rgba(40, 40, 40, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px solid #4a4a4a;
+            min-width: 250px;
+        }
+        
+        .screen-stats div {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .screen-stats span:last-child {
+            color: #ffd166;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: linear-gradient(to bottom, #ff6b6b, #c44545);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border-radius: 8px;
+            margin: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #ff8a8a;
+            font-weight: bold;
+            min-width: 200px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to bottom, #ff8a8a, #d45555);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Mobile Controls */
+        #mobile-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            pointer-events: none;
+            z-index: 150;
+            display: none;
+        }
+        
+        #joystick-area {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 150px;
+            height: 150px;
+            background: rgba(100, 100, 100, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: auto;
+        }
+        
+        #joystick-stick {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        #shoot-button {
+            position: absolute;
+            bottom: 50px;
+            right: 30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 107, 107, 0.7);
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            user-select: none;
+        }
+        
+        @media (max-width: 768px) {
+            #mobile-controls {
+                display: block;
+            }
+            
+            #zoom-controls {
+                bottom: 200px;
+            }
+            
+            #pause-btn {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 1.2rem !important;
+            }
+            
+            #hud {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        
+        <div id="game-ui">
+            <div id="hud">
+                <h2>ZOMBIE SURVIVAL</h2>
+                <div class="hud-item">
+                    <span>Stage:</span>
+                    <span id="stage" class="hud-value">1</span>
+                </div>
+                <div class="hud-item">
+                    <span>Left:</span>
+                    <span id="zombies-left" class="hud-value">200</span>
+                </div>
+                <div class="hud-item">
+                    <span>Killed:</span>
+                    <span id="zombies-killed" class="hud-value">0</span>
+                </div>
+                <div class="hud-item">
+                    <span>Ammo:</span>
+                    <span id="ammo-count" class="hud-value">20</span>
+                </div>
+                <div id="lives-container">
+                    <span>Lives:</span>
+                    <div id="lives-display">
+                        <span class="life-heart">♥</span>
+                        <span class="life-heart">♥</span>
+                        <span class="life-heart">♥</span>
+                        <span class="life-heart">♥</span>
+                        <span class="life-heart">♥</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="weapon-info">
+                <div id="weapon-name">SHOTGUN</div>
+                <div id="ammo-info">20/∞</div>
+            </div>
+            
+            <button id="pause-btn" style="position: absolute; top: 15px; right: 15px; width: 50px; height: 50px; background: rgba(0,0,0,0.7); border: 2px solid #4a4a4a; border-radius: 8px; color: white; font-size: 1.5rem; cursor: pointer; pointer-events: auto; display: flex; align-items: center; justify-content: center;">⏸</button>
+            
+            <div id="save-indicator">GAME SAVED</div>
+            
+            <div id="zoom-controls">
+                <button id="zoom-out" class="zoom-btn">-</button>
+                <button id="zoom-in" class="zoom-btn">+</button>
+            </div>
+            
+            <div id="instructions">
+                <h3>CONTROLS</h3>
+                <p>• WASD/Arrows: Move</p>
+                <p>• Mouse: Aim & Click to Shoot</p>
+                <p>• Scroll: Zoom</p>
+            </div>
+        </div>
+        
+        <div id="start-screen" class="screen">
+            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 250px; max-height: 150px; margin-bottom: 10px;">
+            <h1 class="screen-title" style="font-size: 2.5rem; margin-bottom: 10px;">ZOMBIE SURVIVAL</h1>
+            <p class="screen-subtitle" style="font-size: 1rem; margin-bottom: 15px;">Survive 5 stages of zombies</p>
+            <div class="screen-stats" style="padding: 15px; margin: 10px 0; min-width: 250px;">
+                <div><span>Stage:</span><span id="start-stage">1</span></div>
+                <div><span>Zombies:</span><span id="start-zombies">200</span></div>
+                <div><span>Ammo:</span><span>20</span></div>
+                <div><span>Lives:</span><span>3</span></div>
+            </div>
+            <button id="start-btn" class="btn" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 10px;">NEW GAME</button>
+            <button id="continue-btn" class="btn hidden" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 5px; background: linear-gradient(to bottom, #4ecdc4, #3a9d94);">CONTINUE</button>
+        </div>
+        
+        <div id="stage-complete-screen" class="screen hidden">
+            <h1 class="screen-title">STAGE COMPLETE!</h1>
+            <p class="screen-subtitle">Ready for the next wave?</p>
+            <div class="screen-stats">
+                <div><span>Completed:</span><span id="completed-stage">1</span></div>
+                <div><span>Killed:</span><span id="completed-kills">0</span></div>
+                <div><span>Ammo Found:</span><span id="completed-ammo">0</span></div>
+                <div><span>Next Wave:</span><span id="next-stage-zombies">300</span></div>
+            </div>
+            <button id="next-stage-btn" class="btn">NEXT STAGE</button>
+        </div>
+        
+        <div id="game-over-screen" class="screen hidden">
+            <h1 class="screen-title">GAME OVER</h1>
+            <p class="screen-subtitle">You have been overwhelmed...</p>
+            <div class="screen-stats">
+                <div><span>Stage:</span><span id="final-stage">1</span></div>
+                <div><span>Killed:</span><span id="final-kills">0</span></div>
+                <div><span>Ammo:</span><span id="final-ammo">0</span></div>
+            </div>
+            <button id="restart-btn" class="btn">RESTART</button>
+        </div>
+        
+        <div id="pause-screen" class="screen hidden">
+            <h1 class="screen-title">PAUSED</h1>
+            <p class="screen-subtitle">Game is paused</p>
+            <div class="screen-stats">
+                <div><span>Stage:</span><span id="pause-stage">1</span></div>
+                <div><span>Zombies Left:</span><span id="pause-zombies">200</span></div>
+                <div><span>Lives:</span><span id="pause-lives">3</span></div>
+                <div><span>Ammo:</span><span id="pause-ammo">20</span></div>
+            </div>
+            <button id="resume-btn" class="btn">RESUME</button>
+            <button id="quit-btn" class="btn" style="background: linear-gradient(to bottom, #666, #444); border-color: #888;">QUIT TO MENU</button>
+        </div>
+        
+        <!-- Mobile Controls -->
+        <div id="mobile-controls">
+            <div id="joystick-area">
+                <div id="joystick-stick"></div>
+            </div>
+            <div id="shoot-button">SHOOT</div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            CANVAS_WIDTH: 3000,
+            CANVAS_HEIGHT: 3000,
+            STARTING_AMMO: 20,
+            STARTING_LIVES: 3,
+            ZOMBIES_PER_STAGE: [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100],
+            TOTAL_STAGES: 10,
+            PLAYER_SPEED: 4,
+            PLAYER_SIZE: 50,
+            ZOMBIE_SPEED_MIN: 0.5,
+            ZOMBIE_SPEED_MAX: 1.5,
+            ZOMBIE_SIZE: 45,
+            SHOTGUN_DAMAGE: 40,
+            SHOTGUN_RANGE: 250,
+            SHOTGUN_SPREAD: 0.4,
+            SHOTGUN_PELLETS: 6,
+            SHOTGUN_FIRE_RATE: 800,
+            AMMO_DROP_CHANCE: 0.3,
+            HIDDEN_AMMO_COUNT: 50,
+            MIN_ZOOM: 0.5,
+            MAX_ZOOM: 3,
+            DEFAULT_ZOOM: 1,
+            ZOOM_STEP: 0.25,
+            INVINCIBILITY_TIME: 1000,
+            BUILDING_WIDTH: 150,
+            BUILDING_HEIGHT: 150
+        };
+
+        // Fixed building positions (same every stage)
+        const BUILDING_POSITIONS = [
+            {x: 400, y: 400}, {x: 800, y: 400}, {x: 1200, y: 400}, {x: 1600, y: 400}, {x: 2000, y: 400},
+            {x: 400, y: 800}, {x: 800, y: 800}, {x: 1200, y: 800}, {x: 1600, y: 800}, {x: 2000, y: 800},
+            {x: 400, y: 1200}, {x: 800, y: 1200}, {x: 1200, y: 1200}, {x: 1600, y: 1200}, {x: 2000, y: 1200},
+            {x: 400, y: 1600}, {x: 800, y: 1600}, {x: 1200, y: 1600}, {x: 1600, y: 1600}, {x: 2000, y: 1600},
+            {x: 400, y: 2000}, {x: 800, y: 2000}, {x: 1200, y: 2000}, {x: 1600, y: 2000}, {x: 2000, y: 2000}
+        ];
+
+        // ============================================
+        // PASTE YOUR IMAGE URLS HERE (LINE 302)
+        // Leave blank "" to use colored shapes
+        // ============================================
+        const SPRITES = {
+            player: "",
+            zombie1: "",
+            zombie2: "",
+            zombie3: "",
+            zombie4: "",
+            zombie5: "",
+            zombie6: "",
+            zombie7: "",
+            zombie8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-8.png",
+            zombie9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-9.png",
+            zombie10: "",  // Stage 6 new zombie
+            zombie11: "",  // Stage 7 new zombie
+            zombie12: "",  // Stage 8 new zombie
+            zombie13: "",  // Stage 9 new zombie
+            zombie14: "",  // Stage 10 new zombie
+            ammo: "",
+            // Boss sprites for each stage
+            boss1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-1.png",
+            boss2: "",   // Stage 2 boss
+            boss3: "",   // Stage 3 boss
+            boss4: "",   // Stage 4 boss
+            boss5: "",   // Stage 5 boss
+            boss6: "",   // Stage 6 boss 1
+            boss7: "",   // Stage 7 boss 1
+            boss8: "",   // Stage 8 boss 1
+            boss9: "",   // Stage 9 boss 1
+            boss10: "",  // Stage 10 boss 1
+            boss11: "",  // Stage 10 boss 2
+            boss12: "",  // Stage 10 boss 3
+            // 25 Building sprites
+            building1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building11: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building12: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building13: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building14: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building15: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building16: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building17: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building18: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building19: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building20: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building21: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building22: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building23: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building24: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building25: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            // Stage-specific background tiles
+            groundTile1: "",   // Stage 1 background
+            groundTile2: "",   // Stage 2 background
+            groundTile3: "",   // Stage 3 background
+            groundTile4: "",   // Stage 4 background
+            groundTile5: "",   // Stage 5 background
+            groundTile6: "",   // Stage 6 background
+            groundTile7: "",   // Stage 7 background
+            groundTile8: "",   // Stage 8 background
+            groundTile9: "",   // Stage 9 background
+            groundTile10: ""   // Stage 10 background
+        };
+
+        // ============================================
+        // BACKGROUND MUSIC FOR EACH STAGE
+        // Paste your MP3 URLs here (one per stage)
+        // Leave blank "" for no music
+        // ============================================
+        const STAGE_MUSIC = {
+            stage1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage2: "",   // Stage 2 music
+            stage3: "",   // Stage 3 music
+            stage4: "",   // Stage 4 music
+            stage5: "",   // Stage 5 music
+            stage6: "",   // Stage 6 music
+            stage7: "",   // Stage 7 music
+            stage8: "",   // Stage 8 music
+            stage9: "",   // Stage 9 music
+            stage10: ""   // Stage 10 music
+        };
+
+        // Load images
+        const IMG = {};
+        for (let key in SPRITES) {
+            IMG[key] = new Image();
+            if (SPRITES[key]) IMG[key].src = SPRITES[key];
+        }
+
+        let gameState = {
+            stage: 1,
+            zombiesKilled: 0,
+            zombiesLeft: CONFIG.ZOMBIES_PER_STAGE[0],
+            playerLives: CONFIG.STARTING_LIVES,
+            playerAmmo: CONFIG.STARTING_AMMO,
+            totalAmmoCollected: 0,
+            gameRunning: false,
+            gameOver: false,
+            stageComplete: false,
+            lastShotTime: 0,
+            lastHitTime: 0,
+            zoom: CONFIG.DEFAULT_ZOOM,
+            isInvincible: false,
+            bossActive: false,
+            bossPlayedSound: false,
+            isPaused: false
+        };
+
+        const player = {
+            x: CONFIG.CANVAS_WIDTH / 2,
+            y: CONFIG.CANVAS_HEIGHT / 2,
+            size: CONFIG.PLAYER_SIZE,
+            speed: CONFIG.PLAYER_SPEED,
+            angle: 0
+        };
+
+        const bosses = [];  // Changed to array for multiple bosses
+        const zombies = [];
+        const ammoPacks = [];
+        const bloodSplatters = [];
+        const bulletTraces = [];
+        const buildings = [];
+        const keys = new Set();
+        const mouse = { x: 0, y: 0 };
+
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Background music
+        let backgroundMusic = null;
+
+        // Save/Load game functions
+        function saveGame() {
+            const saveData = {
+                stage: gameState.stage,
+                playerLives: gameState.playerLives,
+                playerAmmo: gameState.playerAmmo,
+                totalAmmoCollected: gameState.totalAmmoCollected,
+                highestStage: Math.max(gameState.stage, parseInt(localStorage.getItem('highestStage') || '1'))
+            };
+            localStorage.setItem('zombieGameSave', JSON.stringify(saveData));
+            localStorage.setItem('highestStage', saveData.highestStage.toString());
+            
+            // Show save indicator
+            const indicator = document.getElementById('save-indicator');
+            indicator.style.opacity = '1';
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 2000);
+            
+            console.log('Game saved:', saveData);
+        }
+
+        function loadGame() {
+            const saveData = localStorage.getItem('zombieGameSave');
+            if (saveData) {
+                try {
+                    const data = JSON.parse(saveData);
+                    return data;
+                } catch (e) {
+                    console.error('Failed to load save data');
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        function clearSave() {
+            localStorage.removeItem('zombieGameSave');
+        }
+
+        function playStageMusic(stage) {
+            // Stop current music
+            if (backgroundMusic) {
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0;
+            }
+
+            // Get music URL for this stage
+            const musicUrl = STAGE_MUSIC['stage' + stage];
+            
+            if (musicUrl) {
+                backgroundMusic = new Audio(musicUrl);
+                backgroundMusic.loop = true;
+                backgroundMusic.volume = 0.3;
+                
+                // Play music (handle autoplay restrictions)
+                backgroundMusic.play().catch(err => {
+                    console.log("Music autoplay prevented. Click to enable sound.");
+                });
+            }
+        }
+
+        function stopStageMusic() {
+            if (backgroundMusic) {
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0;
+            }
+        }
+
+        // Initialize buildings with fixed positions
+        function initBuildings() {
+            buildings.length = 0;
+            for (let i = 0; i < BUILDING_POSITIONS.length; i++) {
+                buildings.push({
+                    id: i + 1,
+                    x: BUILDING_POSITIONS[i].x,
+                    y: BUILDING_POSITIONS[i].y,
+                    width: CONFIG.BUILDING_WIDTH,
+                    height: CONFIG.BUILDING_HEIGHT
+                });
+            }
+        }
+
+        // Check collision with buildings
+        function checkBuildingCollision(x, y, size) {
+            for (const building of buildings) {
+                if (x + size > building.x && 
+                    x - size < building.x + building.width &&
+                    y + size > building.y && 
+                    y - size < building.y + building.height) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Get valid position avoiding buildings
+        function getValidPosition(size) {
+            let attempts = 0;
+            while (attempts < 100) {
+                const x = Math.random() * (CONFIG.CANVAS_WIDTH - size * 2) + size;
+                const y = Math.random() * (CONFIG.CANVAS_HEIGHT - size * 2) + size;
+                if (!checkBuildingCollision(x, y, size)) {
+                    return {x, y};
+                }
+                attempts++;
+            }
+            return {x: CONFIG.CANVAS_WIDTH / 2, y: CONFIG.CANVAS_HEIGHT / 2};
+        }
+
+        function setupEvents() {
+            window.addEventListener('keydown', (e) => {
+                if (gameState.gameRunning) {
+                    const key = e.key.toLowerCase();
+                    if (['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright',' '].includes(key)) {
+                        e.preventDefault();
+                        keys.add(key);
+                        if (key === ' ') shoot();
+                    }
+                }
+            });
+            
+            window.addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
+            window.addEventListener('blur', () => keys.clear());
+            
+            canvas.addEventListener('mousemove', (e) => {
+                const r = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - r.left;
+                mouse.y = e.clientY - r.top;
+            });
+            
+            canvas.addEventListener('mousedown', (e) => {
+                if (gameState.gameRunning) shoot();
+                e.preventDefault();
+            });
+            
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY < 0 && gameState.zoom < CONFIG.MAX_ZOOM) gameState.zoom += CONFIG.ZOOM_STEP;
+                else if (e.deltaY > 0 && gameState.zoom > CONFIG.MIN_ZOOM) gameState.zoom -= CONFIG.ZOOM_STEP;
+            }, {passive: false});
+            
+            document.getElementById('zoom-in').addEventListener('click', () => {
+                if (gameState.zoom < CONFIG.MAX_ZOOM) gameState.zoom += CONFIG.ZOOM_STEP;
+            });
+            
+            document.getElementById('zoom-out').addEventListener('click', () => {
+                if (gameState.zoom > CONFIG.MIN_ZOOM) gameState.zoom -= CONFIG.ZOOM_STEP;
+            });
+            
+            document.getElementById('start-btn').addEventListener('click', () => {
+                clearSave();  // Clear save when starting new game
+                document.getElementById('start-screen').classList.add('hidden');
+                gameState.gameRunning = true;
+                playStageMusic(gameState.stage);
+            });
+            
+            document.getElementById('restart-btn').addEventListener('click', restartGame);
+            document.getElementById('next-stage-btn').addEventListener('click', nextStage);
+            
+            document.getElementById('pause-btn').addEventListener('click', togglePause);
+            document.getElementById('resume-btn').addEventListener('click', togglePause);
+            document.getElementById('quit-btn').addEventListener('click', quitToMenu);
+            
+            // ESC key to pause
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && gameState.gameRunning && !gameState.gameOver && !gameState.stageComplete) {
+                    togglePause();
+                }
+            });
+            
+            // Mobile joystick controls
+            setupMobileControls();
+        }
+
+        function setupMobileControls() {
+            const joystickArea = document.getElementById('joystick-area');
+            const joystickStick = document.getElementById('joystick-stick');
+            const shootButton = document.getElementById('shoot-button');
+            
+            let joystickActive = false;
+            let joystickId = null;
+            let joystickStartX = 0;
+            let joystickStartY = 0;
+            
+            joystickArea.addEventListener('touchstart', (e) => {
+                if (!gameState.gameRunning || gameState.isPaused) return;
+                e.preventDefault();
+                joystickActive = true;
+                joystickId = e.changedTouches[0].identifier;
+                const rect = joystickArea.getBoundingClientRect();
+                joystickStartX = rect.left + rect.width / 2;
+                joystickStartY = rect.top + rect.height / 2;
+            });
+            
+            joystickArea.addEventListener('touchmove', (e) => {
+                if (!joystickActive || !gameState.gameRunning || gameState.isPaused) return;
+                e.preventDefault();
+                
+                for (let touch of e.changedTouches) {
+                    if (touch.identifier === joystickId) {
+                        const deltaX = touch.clientX - joystickStartX;
+                        const deltaY = touch.clientY - joystickStartY;
+                        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                        const maxDistance = 45;
+                        
+                        let moveX = deltaX;
+                        let moveY = deltaY;
+                        
+                        if (distance > maxDistance) {
+                            moveX = (deltaX / distance) * maxDistance;
+                            moveY = (deltaY / distance) * maxDistance;
+                        }
+                        
+                        joystickStick.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+                        
+                        // Update player movement
+                        const angle = Math.atan2(deltaY, deltaX);
+                        const strength = Math.min(distance / maxDistance, 1);
+                        player.x += Math.cos(angle) * player.speed * strength;
+                        player.y += Math.sin(angle) * player.speed * strength;
+                        player.x = Math.max(player.size, Math.min(CONFIG.CANVAS_WIDTH - player.size, player.x));
+                        player.y = Math.max(player.size, Math.min(CONFIG.CANVAS_HEIGHT - player.size, player.y));
+                        
+                        break;
+                    }
+                }
+            });
+            
+            joystickArea.addEventListener('touchend', (e) => {
+                for (let touch of e.changedTouches) {
+                    if (touch.identifier === joystickId) {
+                        joystickActive = false;
+                        joystickId = null;
+                        joystickStick.style.transform = 'translate(-50%, -50%)';
+                        break;
+                    }
+                }
+            });
+            
+            // Shoot button
+            shootButton.addEventListener('touchstart', (e) => {
+                if (!gameState.gameRunning || gameState.isPaused) return;
+                e.preventDefault();
+                shoot();
+            });
+        }
+
+        function togglePause() {
+            if (!gameState.gameRunning || gameState.gameOver || gameState.stageComplete) return;
+            
+            gameState.isPaused = !gameState.isPaused;
+            const pauseScreen = document.getElementById('pause-screen');
+            
+            if (gameState.isPaused) {
+                // Update pause screen info
+                document.getElementById('pause-stage').textContent = gameState.stage;
+                document.getElementById('pause-zombies').textContent = gameState.zombiesLeft;
+                document.getElementById('pause-lives').textContent = gameState.playerLives;
+                document.getElementById('pause-ammo').textContent = gameState.playerAmmo;
+                pauseScreen.classList.remove('hidden');
+                
+                // Pause music
+                if (backgroundMusic) {
+                    backgroundMusic.pause();
+                }
+            } else {
+                pauseScreen.classList.add('hidden');
+                
+                // Resume music
+                if (backgroundMusic) {
+                    backgroundMusic.play().catch(err => console.log("Music resume failed"));
+                }
+            }
+        }
+
+        function quitToMenu() {
+            gameState.isPaused = false;
+            gameState.gameRunning = false;
+            stopStageMusic();
+            document.getElementById('pause-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            saveGame();
+        }
+
+        function initGame() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initBuildings();
+            spawnInitialZombies();
+            spawnHiddenAmmo();
+            spawnBoss();  // Spawn boss on every stage
+            updateHUD();
+            updateLivesDisplay();
+            setupEvents();
+            
+            // Check for save data
+            const saveData = loadGame();
+            const continueBtn = document.getElementById('continue-btn');
+            if (saveData && saveData.stage > 1) {
+                continueBtn.classList.remove('hidden');
+                continueBtn.addEventListener('click', () => {
+                    // Load saved game
+                    gameState.stage = saveData.stage;
+                    gameState.playerLives = saveData.playerLives;
+                    gameState.playerAmmo = saveData.playerAmmo;
+                    gameState.totalAmmoCollected = saveData.totalAmmoCollected;
+                    gameState.zombiesLeft = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+                    
+                    // Reset for current stage
+                    zombies.length = 0;
+                    bosses.length = 0;
+                    ammoPacks.length = 0;
+                    spawnInitialZombies();
+                    spawnHiddenAmmo();
+                    spawnBoss();
+                    updateHUD();
+                    updateLivesDisplay();
+                    
+                    document.getElementById('start-screen').classList.add('hidden');
+                    gameState.gameRunning = true;
+                    playStageMusic(gameState.stage);
+                });
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function spawnInitialZombies() {
+            const n = Math.min(30, gameState.zombiesLeft);
+            for (let i = 0; i < n; i++) spawnZombie();
+            
+            // Always spawn zombie 8 and 9 on every stage
+            spawnGhostZombie(8);
+            spawnGhostZombie(9);
+        }
+
+        function spawnGhostZombie(type) {
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+            switch(side) {
+                case 0: x = -50; y = Math.random() * CONFIG.CANVAS_HEIGHT; break;
+                case 1: x = CONFIG.CANVAS_WIDTH + 50; y = Math.random() * CONFIG.CANVAS_HEIGHT; break;
+                case 2: x = Math.random() * CONFIG.CANVAS_WIDTH; y = -50; break;
+                case 3: x = Math.random() * CONFIG.CANVAS_WIDTH; y = CONFIG.CANVAS_HEIGHT + 50; break;
+            }
+            
+            zombies.push({
+                x, y,
+                size: CONFIG.ZOMBIE_SIZE,
+                speed: CONFIG.ZOMBIE_SPEED_MIN + Math.random() * (CONFIG.ZOMBIE_SPEED_MAX - CONFIG.ZOMBIE_SPEED_MIN),
+                type: type,
+                health: 50 + Math.floor(Math.random() * 50),
+                canPassThroughBuildings: true,
+                isGhost: true
+            });
+        }
+
+        function spawnZombie() {
+            if (gameState.zombiesLeft <= 0) return;
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+            switch(side) {
+                case 0: x = -50; y = Math.random() * CONFIG.CANVAS_HEIGHT; break;
+                case 1: x = CONFIG.CANVAS_WIDTH + 50; y = Math.random() * CONFIG.CANVAS_HEIGHT; break;
+                case 2: x = Math.random() * CONFIG.CANVAS_WIDTH; y = -50; break;
+                case 3: x = Math.random() * CONFIG.CANVAS_WIDTH; y = CONFIG.CANVAS_HEIGHT + 50; break;
+            }
+            
+            // Determine zombie types based on stage
+            let maxZombieType;
+            switch(gameState.stage) {
+                case 1: maxZombieType = 3; break;   // Zombies 1-3
+                case 2: maxZombieType = 4; break;   // Zombies 1-4
+                case 3: maxZombieType = 6; break;   // Zombies 1-6
+                case 4: maxZombieType = 8; break;   // Zombies 1-8
+                case 5: maxZombieType = 9; break;   // Zombies 1-9
+                case 6: maxZombieType = 10; break;  // All zombies 1-10
+                case 7: maxZombieType = 11; break;  // All zombies 1-11
+                case 8: maxZombieType = 12; break;  // All zombies 1-12
+                case 9: maxZombieType = 13; break;  // All zombies 1-13
+                case 10: maxZombieType = 14; break; // All zombies 1-14
+                default: maxZombieType = 3; break;
+            }
+            
+            const zombieType = Math.floor(Math.random() * maxZombieType) + 1;
+            
+            zombies.push({
+                x, y,
+                size: CONFIG.ZOMBIE_SIZE,
+                speed: CONFIG.ZOMBIE_SPEED_MIN + Math.random() * (CONFIG.ZOMBIE_SPEED_MAX - CONFIG.ZOMBIE_SPEED_MIN),
+                type: zombieType,
+                health: 50 + Math.floor(Math.random() * 50),
+                canPassThroughBuildings: (zombieType === 8 || zombieType === 9)  // Zombies 8 & 9 are ghosts
+            });
+            gameState.zombiesLeft--;
+        }
+
+        function spawnHiddenAmmo() {
+            for (let i = 0; i < CONFIG.HIDDEN_AMMO_COUNT; i++) {
+                const pos = getValidPosition(15);
+                ammoPacks.push({
+                    x: pos.x,
+                    y: pos.y,
+                    amount: 5 + Math.floor(Math.random() * 10)
+                });
+            }
+        }
+
+        function spawnBoss() {
+            bosses.length = 0;  // Clear any existing bosses
+            
+            // Boss health triples each stage
+            const baseHealth = 2400;
+            const bossHealth = baseHealth * Math.pow(3, gameState.stage - 1);
+            
+            // Determine number of bosses
+            let bossCount = 1;
+            let bossIds = [gameState.stage];  // Default: use stage number as boss ID
+            
+            if (gameState.stage >= 6 && gameState.stage <= 9) {
+                bossCount = 2;
+                bossIds = [gameState.stage, gameState.stage];  // Two of the same boss
+            } else if (gameState.stage === 10) {
+                bossCount = 3;
+                bossIds = [10, 11, 12];  // Three different bosses
+            }
+            
+            // Spawn bosses at different positions
+            for (let i = 0; i < bossCount; i++) {
+                const xOffset = (i - (bossCount - 1) / 2) * 300;
+                bosses.push({
+                    x: CONFIG.CANVAS_WIDTH / 2 + xOffset,
+                    y: 100 + (i * 50),
+                    size: CONFIG.ZOMBIE_SIZE * 3,
+                    speed: 1.2,
+                    health: bossHealth,
+                    maxHealth: bossHealth,
+                    stage: gameState.stage,
+                    bossId: bossIds[i],
+                    soundPlayed: false
+                });
+            }
+            
+            gameState.bossActive = true;
+        }
+
+        function gameLoop() {
+            if (gameState.gameRunning && !gameState.gameOver && !gameState.stageComplete && !gameState.isPaused) {
+                update();
+                draw();
+                
+                // Check stage completion - only count non-ghost zombies
+                const nonGhostZombies = zombies.filter(z => !z.isGhost);
+                const regularZombiesGone = gameState.zombiesLeft <= 0 && nonGhostZombies.length === 0;
+                const bossDefeated = !gameState.bossActive || bosses.length === 0;
+                
+                if (regularZombiesGone && bossDefeated) {
+                    completeStage();
+                }
+                
+                // Spawn regular zombies
+                if (gameState.zombiesLeft > 0 && zombies.length < 50 && Math.random() < 0.05) {
+                    spawnZombie();
+                }
+                
+                // Spawn ghost zombies periodically (10% chance when spawning)
+                if (zombies.length < 50 && Math.random() < 0.01) {
+                    const ghostType = Math.random() < 0.5 ? 8 : 9;
+                    spawnGhostZombie(ghostType);
+                }
+            } else if (gameState.isPaused) {
+                // Still draw when paused
+                draw();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update() {
+            updatePlayer();
+            updateZombies();
+            updateBoss();
+            updateAmmo();
+            updateBulletTraces();
+            updateHUD();
+            if (gameState.isInvincible && Date.now() - gameState.lastHitTime > CONFIG.INVINCIBILITY_TIME) {
+                gameState.isInvincible = false;
+            }
+        }
+
+        function updateBoss() {
+            if (!gameState.bossActive) return;
+            
+            for (let i = bosses.length - 1; i >= 0; i--) {
+                const boss = bosses[i];
+                
+                // Move towards player
+                const dx = player.x - boss.x;
+                const dy = player.y - boss.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance > 0) {
+                    // Boss can pass through buildings
+                    boss.x += (dx / distance) * boss.speed;
+                    boss.y += (dy / distance) * boss.speed;
+                }
+                
+                // Play boss sound when near player (200 pixels)
+                if (distance < 200 && !boss.soundPlayed) {
+                    playBossSound();
+                    boss.soundPlayed = true;
+                }
+                
+                // Reset sound flag when boss moves away
+                if (distance > 250) {
+                    boss.soundPlayed = false;
+                }
+                
+                // Check collision with player
+                if (!gameState.isInvincible && distance < player.size + boss.size) {
+                    takeDamage();
+                }
+                
+                // Check if boss is dead
+                if (boss.health <= 0) {
+                    bloodSplatters.push({x: boss.x, y: boss.y, size: 30 + Math.random() * 20, alpha: 1});
+                    // Boss drops lots of ammo
+                    ammoPacks.push({x: boss.x, y: boss.y, amount: 30});
+                    bosses.splice(i, 1);
+                }
+            }
+            
+            // If all bosses are dead, deactivate boss mode
+            if (bosses.length === 0) {
+                gameState.bossActive = false;
+            }
+        }
+
+        function playBossSound() {
+            try {
+                const ac = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ac.createOscillator(), gain = ac.createGain();
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(80, ac.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.4, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.5);
+                osc.start(ac.currentTime);
+                osc.stop(ac.currentTime + 0.5);
+            } catch(e) {}
+        }
+
+        function updatePlayer() {
+            let dx = 0, dy = 0;
+            if (keys.has('w') || keys.has('arrowup')) dy -= 1;
+            if (keys.has('s') || keys.has('arrowdown')) dy += 1;
+            if (keys.has('a') || keys.has('arrowleft')) dx -= 1;
+            if (keys.has('d') || keys.has('arrowright')) dx += 1;
+            if (dx && dy) { dx *= 0.707; dy *= 0.707; }
+            
+            // Calculate new position
+            let newX = player.x + dx * player.speed;
+            let newY = player.y + dy * player.speed;
+            
+            // Keep within bounds
+            newX = Math.max(player.size, Math.min(CONFIG.CANVAS_WIDTH - player.size, newX));
+            newY = Math.max(player.size, Math.min(CONFIG.CANVAS_HEIGHT - player.size, newY));
+            
+            // Check building collision
+            if (!checkBuildingCollision(newX, newY, player.size)) {
+                player.x = newX;
+                player.y = newY;
+            } else {
+                // Try sliding along walls
+                if (!checkBuildingCollision(newX, player.y, player.size)) {
+                    player.x = newX;
+                } else if (!checkBuildingCollision(player.x, newY, player.size)) {
+                    player.y = newY;
+                }
+            }
+            
+            const wmx = (mouse.x / gameState.zoom) + player.x - (canvas.width / 2 / gameState.zoom);
+            const wmy = (mouse.y / gameState.zoom) + player.y - (canvas.height / 2 / gameState.zoom);
+            player.angle = Math.atan2(wmy - player.y, wmx - player.x);
+        }
+
+        function updateZombies() {
+            for (let i = zombies.length - 1; i >= 0; i--) {
+                const z = zombies[i];
+                const dx = player.x - z.x, dy = player.y - z.y;
+                const d = Math.sqrt(dx*dx + dy*dy);
+                
+                if (d > 0) {
+                    const newX = z.x + (dx/d) * z.speed;
+                    const newY = z.y + (dy/d) * z.speed;
+                    
+                    // Zombies 8 and 9 can pass through buildings
+                    if (z.canPassThroughBuildings) {
+                        z.x = newX;
+                        z.y = newY;
+                    } else {
+                        // Check building collision for normal zombies
+                        if (!checkBuildingCollision(newX, newY, z.size)) {
+                            z.x = newX;
+                            z.y = newY;
+                        } else {
+                            // Try to slide around buildings
+                            if (!checkBuildingCollision(newX, z.y, z.size)) {
+                                z.x = newX;
+                            } else if (!checkBuildingCollision(z.x, newY, z.size)) {
+                                z.y = newY;
+                            }
+                        }
+                    }
+                }
+                
+                if (!gameState.isInvincible && d < player.size + z.size) takeDamage();
+                if (z.health <= 0) {
+                    if (Math.random() < CONFIG.AMMO_DROP_CHANCE) {
+                        ammoPacks.push({x: z.x, y: z.y, amount: 2 + Math.floor(Math.random() * 4)});
+                    }
+                    bloodSplatters.push({x: z.x, y: z.y, size: 10 + Math.random() * 15, alpha: 1});
+                    zombies.splice(i, 1);
+                    // Ghost zombies don't count toward stage zombies
+                    if (!z.isGhost) {
+                        gameState.zombiesKilled++;
+                    }
+                }
+            }
+        }
+
+        function takeDamage() {
+            gameState.playerLives--;
+            gameState.lastHitTime = Date.now();
+            gameState.isInvincible = true;
+            updateLivesDisplay();
+            for (let i = 0; i < 5; i++) {
+                bloodSplatters.push({
+                    x: player.x + (Math.random() - 0.5) * 40,
+                    y: player.y + (Math.random() - 0.5) * 40,
+                    size: 3 + Math.random() * 5,
+                    alpha: 0.8
+                });
+            }
+            if (gameState.playerLives <= 0) gameOver();
+        }
+
+        function updateAmmo() {
+            for (let i = ammoPacks.length - 1; i >= 0; i--) {
+                const a = ammoPacks[i];
+                const dx = player.x - a.x, dy = player.y - a.y;
+                const d = Math.sqrt(dx*dx + dy*dy);
+                if (d < player.size + 15) {
+                    gameState.playerAmmo += a.amount;
+                    gameState.totalAmmoCollected += a.amount;
+                    ammoPacks.splice(i, 1);
+                }
+            }
+        }
+
+        function updateBulletTraces() {
+            for (let i = bulletTraces.length - 1; i >= 0; i--) {
+                bulletTraces[i].life -= 0.05;
+                if (bulletTraces[i].life <= 0) bulletTraces.splice(i, 1);
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const vx = player.x - canvas.width / (2 * gameState.zoom);
+            const vy = player.y - canvas.height / (2 * gameState.zoom);
+            
+            ctx.save();
+            ctx.scale(gameState.zoom, gameState.zoom);
+            ctx.translate(-vx, -vy);
+            
+            // Background - use stage-specific tile
+            const tileKey = 'groundTile' + gameState.stage;
+            if (IMG[tileKey] && IMG[tileKey].complete && IMG[tileKey].naturalWidth > 0 && SPRITES[tileKey]) {
+                const pattern = ctx.createPattern(IMG[tileKey], 'repeat');
+                ctx.fillStyle = pattern;
+            } else {
+                ctx.fillStyle = '#1a3a1a';
+            }
+            ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
+            
+            // Draw buildings
+            for (let i = 0; i < buildings.length; i++) {
+                const b = buildings[i];
+                const buildingImg = IMG['building' + b.id];
+                if (buildingImg && buildingImg.complete && buildingImg.naturalWidth > 0 && SPRITES['building' + b.id]) {
+                    ctx.drawImage(buildingImg, b.x, b.y, b.width, b.height);
+                } else {
+                    ctx.fillStyle = '#555577';
+                    ctx.fillRect(b.x, b.y, b.width, b.height);
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(b.x, b.y, b.width, b.height);
+                }
+            }
+            
+            // Ammo
+            for (const a of ammoPacks) {
+                if (IMG.ammo && IMG.ammo.complete && IMG.ammo.naturalWidth > 0 && SPRITES.ammo) {
+                    ctx.drawImage(IMG.ammo, a.x - 15, a.y - 15, 30, 30);
+                } else {
+                    ctx.fillStyle = '#fd6';
+                    ctx.beginPath();
+                    ctx.arc(a.x, a.y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('+' + a.amount, a.x, a.y);
+            }
+            
+            // Bullets
+            for (const t of bulletTraces) {
+                ctx.strokeStyle = `rgba(255,255,0,${t.life})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(t.start.x, t.start.y);
+                ctx.lineTo(t.end.x, t.end.y);
+                ctx.stroke();
+            }
+            
+            // Blood
+            for (let i = bloodSplatters.length - 1; i >= 0; i--) {
+                const s = bloodSplatters[i];
+                ctx.fillStyle = `rgba(139,0,0,${s.alpha})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                s.alpha -= 0.01;
+                if (s.alpha <= 0) bloodSplatters.splice(i, 1);
+            }
+            
+            // Zombies
+            for (const z of zombies) {
+                const zi = IMG['zombie' + z.type];
+                
+                // Make ghost zombies (8 & 9) semi-transparent
+                if (z.canPassThroughBuildings) {
+                    ctx.globalAlpha = 0.7;
+                }
+                
+                if (zi && zi.complete && zi.naturalWidth > 0 && SPRITES['zombie' + z.type]) {
+                    ctx.save();
+                    ctx.translate(z.x, z.y);
+                    ctx.drawImage(zi, -z.size/2, -z.size/2, z.size, z.size);
+                    ctx.restore();
+                } else {
+                    const hue = (z.type * 20) % 360;
+                    ctx.fillStyle = `hsl(${hue},70%,40%)`;
+                    ctx.beginPath();
+                    ctx.arc(z.x, z.y, z.size/2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Reset alpha
+                ctx.globalAlpha = 1;
+                
+                const hp = Math.max(0, z.health / 100);
+                ctx.fillStyle = '#f00';
+                ctx.fillRect(z.x - 20, z.y - 35, 40, 5);
+                ctx.fillStyle = '#0f0';
+                ctx.fillRect(z.x - 20, z.y - 35, 40 * hp, 5);
+            }
+            
+            // Bosses
+            if (gameState.bossActive && bosses.length > 0) {
+                for (const boss of bosses) {
+                    const bossImg = IMG['boss' + boss.bossId];
+                    
+                    // Make boss semi-transparent (ghost effect)
+                    ctx.globalAlpha = 0.8;
+                    
+                    if (bossImg && bossImg.complete && bossImg.naturalWidth > 0 && SPRITES['boss' + boss.bossId]) {
+                        ctx.save();
+                        ctx.translate(boss.x, boss.y);
+                        ctx.drawImage(bossImg, -boss.size/2, -boss.size/2, boss.size, boss.size);
+                        ctx.restore();
+                    } else {
+                        // Fallback color changes per boss
+                        const colors = ['#8b0000', '#8b008b', '#ff4500', '#ff8c00', '#ff0000', '#dc143c', '#b22222', '#8b0000', '#a52a2a', '#800000', '#660000', '#4d0000'];
+                        ctx.fillStyle = colors[boss.bossId - 1] || '#8b0000';
+                        ctx.beginPath();
+                        ctx.arc(boss.x, boss.y, boss.size/2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    // Reset alpha
+                    ctx.globalAlpha = 1;
+                    
+                    // Boss health bar (bigger)
+                    const bossHp = Math.max(0, boss.health / boss.maxHealth);
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120, 10);
+                    ctx.fillStyle = '#f00';
+                    ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120, 10);
+                    ctx.fillStyle = '#0f0';
+                    ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120 * bossHp, 10);
+                    // Boss label
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('BOSS', boss.x, boss.y - boss.size/2 - 30);
+                }
+            }
+            
+            // Player
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.rotate(player.angle);
+            if (IMG.player && IMG.player.complete && IMG.player.naturalWidth > 0 && SPRITES.player) {
+                if (gameState.isInvincible && Math.floor(Date.now()/200) % 2 === 0) ctx.globalAlpha = 0.5;
+                ctx.drawImage(IMG.player, -player.size/2, -player.size/2, player.size, player.size);
+                ctx.globalAlpha = 1;
+            } else {
+                if (gameState.isInvincible && Math.floor(Date.now()/200) % 2 === 0) ctx.fillStyle = 'rgba(255,100,100,0.7)';
+                else ctx.fillStyle = '#4ecdc4';
+                ctx.beginPath();
+                ctx.arc(0, 0, player.size/2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(player.size/3, -3, 25, 6);
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(player.size/3 + 25, -2, 10, 4);
+            ctx.restore();
+            
+            ctx.restore();
+            
+            // Boss HP bars on HUD (top center) - show all bosses
+            if (gameState.bossActive && bosses.length > 0) {
+                const barWidth = 300;
+                const barHeight = 20;
+                const barSpacing = 30;
+                
+                for (let i = 0; i < bosses.length; i++) {
+                    const boss = bosses[i];
+                    const barX = canvas.width / 2 - barWidth / 2;
+                    const barY = 20 + (i * barSpacing);
+                    const bossHp = Math.max(0, boss.health / boss.maxHealth);
+                    
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    ctx.fillRect(barX - 5, barY - 5, barWidth + 10, barHeight + 10);
+                    ctx.fillStyle = '#f00';
+                    ctx.fillRect(barX, barY, barWidth, barHeight);
+                    ctx.fillStyle = '#0f0';
+                    ctx.fillRect(barX, barY, barWidth * bossHp, barHeight);
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(barX, barY, barWidth, barHeight);
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    const label = bosses.length > 1 ? `BOSS ${i + 1}` : 'BOSS';
+                    ctx.fillText(label, canvas.width / 2, barY - 10);
+                }
+            }
+            
+            // Crosshair
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, 5, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(mouse.x - 15, mouse.y);
+            ctx.lineTo(mouse.x + 15, mouse.y);
+            ctx.moveTo(mouse.x, mouse.y - 15);
+            ctx.lineTo(mouse.x, mouse.y + 15);
+            ctx.stroke();
+        }
+
+        function shoot() {
+            if (gameState.playerAmmo <= 0) return;
+            const now = Date.now();
+            if (now - gameState.lastShotTime < CONFIG.SHOTGUN_FIRE_RATE) return;
+            
+            gameState.playerAmmo--;
+            gameState.lastShotTime = now;
+            playShotgunSound();
+            
+            for (let i = 0; i < CONFIG.SHOTGUN_PELLETS; i++) {
+                const spread = (Math.random() - 0.5) * CONFIG.SHOTGUN_SPREAD;
+                const angle = player.angle + spread;
+                const ex = player.x + Math.cos(angle) * CONFIG.SHOTGUN_RANGE;
+                const ey = player.y + Math.sin(angle) * CONFIG.SHOTGUN_RANGE;
+                bulletTraces.push({start: {x: player.x, y: player.y}, end: {x: ex, y: ey}, life: 1});
+                
+                // Check all bosses
+                if (gameState.bossActive) {
+                    for (const boss of bosses) {
+                        const ldx = ex - player.x, ldy = ey - player.y;
+                        const ll = Math.sqrt(ldx*ldx + ldy*ldy);
+                        const lux = ldx/ll, luy = ldy/ll;
+                        const tcx = boss.x - player.x, tcy = boss.y - player.y;
+                        const proj = tcx*lux + tcy*luy;
+                        const clamp = Math.max(0, Math.min(ll, proj));
+                        const cpx = player.x + clamp*lux, cpy = player.y + clamp*luy;
+                        const dx = boss.x - cpx, dy = boss.y - cpy;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist <= boss.size/2) {
+                            boss.health -= CONFIG.SHOTGUN_DAMAGE;
+                            bloodSplatters.push({x: cpx, y: cpy, size: 8 + Math.random() * 12, alpha: 1});
+                        }
+                    }
+                }
+                
+                // Check zombie hits
+                for (const z of zombies) {
+                    const ldx = ex - player.x, ldy = ey - player.y;
+                    const ll = Math.sqrt(ldx*ldx + ldy*ldy);
+                    const lux = ldx/ll, luy = ldy/ll;
+                    const tcx = z.x - player.x, tcy = z.y - player.y;
+                    const proj = tcx*lux + tcy*luy;
+                    const clamp = Math.max(0, Math.min(ll, proj));
+                    const cpx = player.x + clamp*lux, cpy = player.y + clamp*luy;
+                    const dx = z.x - cpx, dy = z.y - cpy;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist <= z.size/2) {
+                        z.health -= CONFIG.SHOTGUN_DAMAGE;
+                        bloodSplatters.push({x: cpx, y: cpy, size: 5 + Math.random() * 10, alpha: 1});
+                    }
+                }
+            }
+            updateHUD();
+        }
+
+        function playShotgunSound() {
+            try {
+                const ac = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ac.createOscillator(), gain = ac.createGain();
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.frequency.setValueAtTime(120, ac.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.3);
+                osc.start(ac.currentTime);
+                osc.stop(ac.currentTime + 0.3);
+            } catch(e) {}
+        }
+
+        function updateHUD() {
+            document.getElementById('stage').textContent = gameState.stage;
+            document.getElementById('zombies-left').textContent = gameState.zombiesLeft;
+            document.getElementById('zombies-killed').textContent = gameState.zombiesKilled;
+            document.getElementById('ammo-count').textContent = gameState.playerAmmo;
+            document.getElementById('start-stage').textContent = gameState.stage;
+            document.getElementById('start-zombies').textContent = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+        }
+
+        function updateLivesDisplay() {
+            const hearts = document.querySelectorAll('.life-heart');
+            hearts.forEach((h, i) => {
+                if (i < gameState.playerLives) h.classList.remove('empty');
+                else h.classList.add('empty');
+            });
+        }
+
+        function completeStage() {
+            gameState.stageComplete = true;
+            gameState.gameRunning = false;
+            stopStageMusic();
+            document.getElementById('completed-stage').textContent = gameState.stage;
+            document.getElementById('completed-kills').textContent = gameState.zombiesKilled;
+            document.getElementById('completed-ammo').textContent = gameState.totalAmmoCollected;
+            if (gameState.stage < CONFIG.TOTAL_STAGES) {
+                document.getElementById('next-stage-zombies').textContent = CONFIG.ZOMBIES_PER_STAGE[gameState.stage];
+            } else {
+                document.getElementById('next-stage-zombies').textContent = "ALL DONE!";
+            }
+            document.getElementById('stage-complete-screen').classList.remove('hidden');
+        }
+
+        function nextStage() {
+            gameState.stage++;
+            if (gameState.stage > CONFIG.TOTAL_STAGES) {
+                alert("You won all 10 stages!");
+                restartGame();
+                return;
+            }
+            
+            // Award one extra life for completing stage (max 5 lives)
+            if (gameState.playerLives < 5) {
+                gameState.playerLives++;
+            }
+            
+            gameState.zombiesLeft = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+            gameState.zombiesKilled = 0;
+            zombies.length = 0;
+            ammoPacks.length = 0;
+            bulletTraces.length = 0;
+            bloodSplatters.length = 0;
+            bosses.length = 0;
+            gameState.bossActive = false;
+            gameState.bossPlayedSound = false;
+            
+            spawnInitialZombies();
+            spawnHiddenAmmo();
+            spawnBoss();  // Spawn boss(es) on every stage
+            
+            document.getElementById('stage-complete-screen').classList.add('hidden');
+            gameState.stageComplete = false;
+            gameState.gameRunning = true;
+            updateLivesDisplay();
+            
+            // Play new stage music
+            playStageMusic(gameState.stage);
+            
+            // Save progress
+            saveGame();
+        }
+
+        function gameOver() {
+            gameState.gameOver = true;
+            gameState.gameRunning = false;
+            stopStageMusic();
+            document.getElementById('final-stage').textContent = gameState.stage;
+            document.getElementById('final-kills').textContent = gameState.zombiesKilled;
+            document.getElementById('final-ammo').textContent = gameState.totalAmmoCollected;
+            document.getElementById('game-over-screen').classList.remove('hidden');
+        }
+
+        function restartGame() {
+            stopStageMusic();
+            clearSave();  // Clear save on restart
+            gameState = {
+                stage: 1,
+                zombiesKilled: 0,
+                zombiesLeft: CONFIG.ZOMBIES_PER_STAGE[0],
+                playerLives: CONFIG.STARTING_LIVES,
+                playerAmmo: CONFIG.STARTING_AMMO,
+                totalAmmoCollected: 0,
+                gameRunning: false,
+                gameOver: false,
+                stageComplete: false,
+                lastShotTime: 0,
+                lastHitTime: 0,
+                zoom: CONFIG.DEFAULT_ZOOM,
+                isInvincible: false,
+                bossActive: false,
+                bossPlayedSound: false,
+                isPaused: false
+            };
+            player.x = CONFIG.CANVAS_WIDTH / 2;
+            player.y = CONFIG.CANVAS_HEIGHT / 2;
+            zombies.length = 0;
+            ammoPacks.length = 0;
+            bulletTraces.length = 0;
+            bloodSplatters.length = 0;
+            bosses.length = 0;
+            
+            initBuildings();
+            spawnInitialZombies();
+            spawnHiddenAmmo();
+            spawnBoss();
+            
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('stage-complete-screen').classList.add('hidden');
+            document.getElementById('pause-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            updateHUD();
+            updateLivesDisplay();
+        }
+
+        window.addEventListener('load', initGame);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
