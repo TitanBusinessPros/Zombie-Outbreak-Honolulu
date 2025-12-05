@@ -522,8 +522,8 @@
 
     <script>
         const CONFIG = {
-            CANVAS_WIDTH: 3000,
-            CANVAS_HEIGHT: 3000,
+            CANVAS_WIDTH: 6000,
+            CANVAS_HEIGHT: 6000,
             STARTING_AMMO: 20,
             STARTING_LIVES: 3,
             ZOMBIES_PER_STAGE: [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100],
@@ -551,11 +551,23 @@
 
         // Fixed building positions (same every stage)
         const BUILDING_POSITIONS = [
-            {x: 400, y: 400}, {x: 800, y: 400}, {x: 1200, y: 400}, {x: 1600, y: 400}, {x: 2000, y: 400},
-            {x: 400, y: 800}, {x: 800, y: 800}, {x: 1200, y: 800}, {x: 1600, y: 800}, {x: 2000, y: 800},
-            {x: 400, y: 1200}, {x: 800, y: 1200}, {x: 1200, y: 1200}, {x: 1600, y: 1200}, {x: 2000, y: 1200},
-            {x: 400, y: 1600}, {x: 800, y: 1600}, {x: 1200, y: 1600}, {x: 1600, y: 1600}, {x: 2000, y: 1600},
-            {x: 400, y: 2000}, {x: 800, y: 2000}, {x: 1200, y: 2000}, {x: 1600, y: 2000}, {x: 2000, y: 2000}
+            // First 5x5 grid (original 25)
+            {x: 400, y: 400}, {x: 900, y: 400}, {x: 1400, y: 400}, {x: 1900, y: 400}, {x: 2400, y: 400},
+            {x: 400, y: 900}, {x: 900, y: 900}, {x: 1400, y: 900}, {x: 1900, y: 900}, {x: 2400, y: 900},
+            {x: 400, y: 1400}, {x: 900, y: 1400}, {x: 1400, y: 1400}, {x: 1900, y: 1400}, {x: 2400, y: 1400},
+            {x: 400, y: 1900}, {x: 900, y: 1900}, {x: 1400, y: 1900}, {x: 1900, y: 1900}, {x: 2400, y: 1900},
+            {x: 400, y: 2400}, {x: 900, y: 2400}, {x: 1400, y: 2400}, {x: 1900, y: 2400}, {x: 2400, y: 2400},
+            // Second 5x5 grid (new 25)
+            {x: 3200, y: 400}, {x: 3700, y: 400}, {x: 4200, y: 400}, {x: 4700, y: 400}, {x: 5200, y: 400},
+            {x: 3200, y: 900}, {x: 3700, y: 900}, {x: 4200, y: 900}, {x: 4700, y: 900}, {x: 5200, y: 900},
+            {x: 3200, y: 1400}, {x: 3700, y: 1400}, {x: 4200, y: 1400}, {x: 4700, y: 1400}, {x: 5200, y: 1400},
+            {x: 3200, y: 1900}, {x: 3700, y: 1900}, {x: 4200, y: 1900}, {x: 4700, y: 1900}, {x: 5200, y: 1900},
+            {x: 3200, y: 2400}, {x: 3700, y: 2400}, {x: 4200, y: 2400}, {x: 4700, y: 2400}, {x: 5200, y: 2400},
+            // Bottom section buildings
+            {x: 800, y: 3200}, {x: 1600, y: 3200}, {x: 2400, y: 3200}, {x: 3200, y: 3200}, {x: 4000, y: 3200},
+            {x: 800, y: 4000}, {x: 1600, y: 4000}, {x: 2400, y: 4000}, {x: 3200, y: 4000}, {x: 4000, y: 4000},
+            {x: 800, y: 4800}, {x: 1600, y: 4800}, {x: 2400, y: 4800}, {x: 3200, y: 4800}, {x: 4000, y: 4800},
+            {x: 800, y: 5400}, {x: 1600, y: 5400}, {x: 2400, y: 5400}, {x: 3200, y: 5400}, {x: 4000, y: 5400}
         ];
 
         // ============================================
@@ -592,7 +604,7 @@
             boss10: "",  // Stage 10 boss 1
             boss11: "",  // Stage 10 boss 2
             boss12: "",  // Stage 10 boss 3
-            // 25 Building sprites
+            // 50 Building sprites (building1-building50)
             building1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
             building2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
             building3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
@@ -618,6 +630,31 @@
             building23: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
             building24: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
             building25: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building26: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building27: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building28: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building29: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building30: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building31: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building32: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building33: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building34: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building35: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building36: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building37: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building38: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building39: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building40: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building41: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building42: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building43: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building44: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building45: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building46: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building47: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building48: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building49: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building50: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
             // Stage-specific background tiles
             groundTile1: "",   // Stage 1 background
             groundTile2: "",   // Stage 2 background
@@ -987,7 +1024,7 @@
             shootButton.addEventListener('touchstart', (e) => {
                 if (!gameState.gameRunning || gameState.isPaused) return;
                 e.preventDefault();
-                shoot();
+                autoAimAndShoot();  // Use auto-aim on mobile
             });
         }
 
@@ -1624,6 +1661,31 @@
             ctx.moveTo(mouse.x, mouse.y - 15);
             ctx.lineTo(mouse.x, mouse.y + 15);
             ctx.stroke();
+            
+            // Mobile auto-aim indicator
+            if (window.innerWidth <= 768) {
+                const target = findNearestZombie();
+                if (target) {
+                    const screenX = (target.x - camX) * gameState.zoom + canvas.width / 2;
+                    const screenY = (target.y - camY) * gameState.zoom + canvas.height / 2;
+                    
+                    ctx.strokeStyle = '#ff0000';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, 40, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Crosshair on target
+                    ctx.strokeStyle = '#ff0000';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(screenX - 15, screenY);
+                    ctx.lineTo(screenX + 15, screenY);
+                    ctx.moveTo(screenX, screenY - 15);
+                    ctx.lineTo(screenX, screenY + 15);
+                    ctx.stroke();
+                }
+            }
         }
 
         function shoot() {
@@ -1679,6 +1741,49 @@
                 }
             }
             updateHUD();
+        }
+
+        function findNearestZombie() {
+            let nearest = null;
+            let minDist = Infinity;
+            
+            // Check all zombies
+            for (const z of zombies) {
+                const dx = z.x - player.x;
+                const dy = z.y - player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < minDist && dist < CONFIG.SHOTGUN_RANGE * 2) {
+                    minDist = dist;
+                    nearest = z;
+                }
+            }
+            
+            // Check all bosses
+            if (gameState.bossActive) {
+                for (const boss of bosses) {
+                    const dx = boss.x - player.x;
+                    const dy = boss.y - player.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < minDist && dist < CONFIG.SHOTGUN_RANGE * 2) {
+                        minDist = dist;
+                        nearest = boss;
+                    }
+                }
+            }
+            
+            return nearest;
+        }
+
+        function autoAimAndShoot() {
+            const target = findNearestZombie();
+            if (target) {
+                const dx = target.x - player.x;
+                const dy = target.y - player.y;
+                player.angle = Math.atan2(dy, dx);
+            }
+            shoot();
         }
 
         function playShotgunSound() {
