@@ -52,6 +52,49 @@
             border: 2px solid #4a4a4a;
             pointer-events: auto;
             min-width: 220px;
+            transition: opacity 0.3s;
+        }
+        
+        #hud.collapsed {
+            display: none;
+        }
+        
+        #hud-toggle {
+            display: none;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #4a4a4a;
+            border-radius: 8px;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 101;
+            pointer-events: auto;
+            font-size: 0.9rem;
+        }
+        
+        #mini-stats {
+            display: none;
+            position: absolute;
+            bottom: 190px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #4a4a4a;
+            border-radius: 8px;
+            padding: 8px 15px;
+            pointer-events: none;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        
+        #mini-stats span {
+            margin: 0 10px;
+            color: #4ecdc4;
+            font-weight: bold;
         }
         
         #hud h2 {
@@ -318,12 +361,27 @@
                 width: 40px !important;
                 height: 40px !important;
                 font-size: 1.2rem !important;
-                top: 80px !important;
+                top: 15px !important;
+                right: 15px !important;
             }
             
             #hud {
-                font-size: 0.9rem;
-                top: 80px !important;
+                top: 70px !important;
+                left: 15px !important;
+                font-size: 0.85rem;
+                max-width: 200px;
+            }
+            
+            #hud.collapsed {
+                display: none;
+            }
+            
+            #hud-toggle {
+                display: block !important;
+            }
+            
+            #mini-stats {
+                display: block !important;
             }
             
             #instructions {
@@ -337,7 +395,16 @@
         <canvas id="game-canvas"></canvas>
         
         <div id="game-ui">
-            <div id="hud">
+            <button id="hud-toggle">📊 STATS</button>
+            
+            <div id="mini-stats">
+                Stage: <span id="mini-stage">1</span> | 
+                Zombies: <span id="mini-zombies">200</span> | 
+                Ammo: <span id="mini-ammo">20</span> | 
+                Lives: <span id="mini-lives">♥♥♥</span>
+            </div>
+            
+            <div id="hud" class="collapsed">
                 <h2>ZOMBIE SURVIVAL</h2>
                 <div class="hud-item">
                     <span>Stage:</span>
@@ -794,6 +861,19 @@
             document.getElementById('pause-btn').addEventListener('click', togglePause);
             document.getElementById('resume-btn').addEventListener('click', togglePause);
             document.getElementById('quit-btn').addEventListener('click', quitToMenu);
+            
+            // HUD toggle for mobile
+            document.getElementById('hud-toggle').addEventListener('click', () => {
+                const hud = document.getElementById('hud');
+                const toggle = document.getElementById('hud-toggle');
+                hud.classList.toggle('collapsed');
+                
+                if (hud.classList.contains('collapsed')) {
+                    toggle.textContent = '📊 STATS';
+                } else {
+                    toggle.textContent = '❌ CLOSE';
+                }
+            });
             
             // ESC key to pause
             window.addEventListener('keydown', (e) => {
@@ -1623,6 +1703,12 @@
             document.getElementById('ammo-count').textContent = gameState.playerAmmo;
             document.getElementById('start-stage').textContent = gameState.stage;
             document.getElementById('start-zombies').textContent = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+            
+            // Update mini-stats for mobile
+            document.getElementById('mini-stage').textContent = gameState.stage;
+            document.getElementById('mini-zombies').textContent = gameState.zombiesLeft;
+            document.getElementById('mini-ammo').textContent = gameState.playerAmmo;
+            document.getElementById('mini-lives').textContent = '♥'.repeat(gameState.playerLives);
         }
 
         function updateLivesDisplay() {
