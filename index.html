@@ -97,6 +97,8 @@
             font-weight: bold;
         }
         
+        /* Hide mini-stats - not needed with stats button */
+        
         #hud h2 {
             color: #ff6b6b;
             margin-bottom: 8px;
@@ -384,10 +386,6 @@
                 display: block !important;
             }
             
-            #mini-stats {
-                display: block !important;
-            }
-            
             #instructions {
                 display: none !important;
             }
@@ -400,13 +398,6 @@
         
         <div id="game-ui">
             <button id="hud-toggle">📊 STATS</button>
-            
-            <div id="mini-stats">
-                Stage: <span id="mini-stage">1</span> | 
-                Zombies: <span id="mini-zombies">200</span> | 
-                Ammo: <span id="mini-ammo">20</span> | 
-                Lives: <span id="mini-lives">♥♥♥</span>
-            </div>
             
             <div id="hud" class="collapsed">
                 <h2>ZOMBIE SURVIVAL</h2>
@@ -634,31 +625,31 @@
             building23: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
             building24: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
             building25: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building26: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building27: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building28: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building29: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building30: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building31: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building32: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building33: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building34: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building35: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building36: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building37: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building38: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building39: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building40: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building41: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building42: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building43: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building44: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building45: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building46: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building47: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building48: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building49: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
-            building50: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-1.png",
+            building26: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building27: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building28: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building29: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building30: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building31: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building32: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building33: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building34: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building35: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building36: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building37: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building38: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building39: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building40: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building41: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building42: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building43: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building44: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building45: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building46: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building47: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building48: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building49: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
+            building50: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu%20Roofing.png",
             // Stage-specific background tiles
             groundTile1: "",   // Stage 1 background
             groundTile2: "",   // Stage 2 background
@@ -1901,12 +1892,6 @@
             document.getElementById('ammo-count').textContent = gameState.playerAmmo;
             document.getElementById('start-stage').textContent = gameState.stage;
             document.getElementById('start-zombies').textContent = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
-            
-            // Update mini-stats for mobile
-            document.getElementById('mini-stage').textContent = gameState.stage;
-            document.getElementById('mini-zombies').textContent = gameState.zombiesLeft;
-            document.getElementById('mini-ammo').textContent = gameState.playerAmmo;
-            document.getElementById('mini-lives').textContent = '♥'.repeat(gameState.playerLives);
         }
 
         function updateLivesDisplay() {
