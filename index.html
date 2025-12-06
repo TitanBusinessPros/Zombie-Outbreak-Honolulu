@@ -406,30 +406,37 @@
             
             /* Make start screen scrollable and compact on mobile */
             .screen-title {
-                font-size: 1.8rem !important;
-                margin-bottom: 5px !important;
+                font-size: 1.5rem !important;
+                margin-bottom: 3px !important;
             }
             
             .screen-subtitle {
-                font-size: 0.9rem !important;
-                margin-bottom: 8px !important;
+                font-size: 0.8rem !important;
+                margin-bottom: 5px !important;
             }
             
             .difficulty-btn {
-                padding: 8px 16px !important;
-                font-size: 0.9rem !important;
-                min-width: 90px !important;
+                padding: 8px 12px !important;
+                font-size: 0.85rem !important;
+                min-width: 80px !important;
             }
             
             .screen-stats {
-                padding: 10px !important;
-                font-size: 0.85rem !important;
+                padding: 8px !important;
+                font-size: 0.8rem !important;
+                margin: 5px 0 !important;
             }
             
             .btn {
-                padding: 10px 25px !important;
-                font-size: 1rem !important;
-                min-width: 150px !important;
+                padding: 8px 20px !important;
+                font-size: 0.95rem !important;
+                min-width: 140px !important;
+                margin: 5px !important;
+            }
+            
+            .screen img {
+                max-width: 150px !important;
+                max-height: 80px !important;
             }
         }
     </style>
@@ -491,27 +498,27 @@
         <div id="start-screen" class="screen">
             <button onclick="window.history.back()" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7); border: 2px solid #4a4a4a; border-radius: 8px; color: white; padding: 10px 20px; cursor: pointer; font-size: 1rem; font-weight: bold;">← BACK</button>
             
-            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 250px; max-height: 150px; margin-bottom: 10px;">
-            <h1 class="screen-title" style="font-size: 2.5rem; margin-bottom: 10px;">ZOMBIE SURVIVAL</h1>
-            <p class="screen-subtitle" style="font-size: 1rem; margin-bottom: 15px;">Survive 10 stages of zombies</p>
+            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 200px; max-height: 100px; margin-bottom: 5px;">
+            <h1 class="screen-title" style="font-size: 2rem; margin-bottom: 5px;">ZOMBIE SURVIVAL</h1>
+            <p class="screen-subtitle" style="font-size: 0.9rem; margin-bottom: 8px;">Survive 10 stages of zombies</p>
             
-            <div style="margin: 20px 0;">
-                <p style="font-size: 1.2rem; margin-bottom: 10px; color: #ffd166;">SELECT DIFFICULTY:</p>
+            <div style="margin: 10px 0;">
+                <p style="font-size: 1rem; margin-bottom: 8px; color: #ffd166;">SELECT DIFFICULTY:</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button id="easy-btn" class="difficulty-btn" style="padding: 12px 24px; font-size: 1.1rem; background: linear-gradient(to bottom, #4ecdc4, #3ab0a8); border: 3px solid #4ecdc4; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 120px;">😊 EASY</button>
-                    <button id="medium-btn" class="difficulty-btn selected" style="padding: 12px 24px; font-size: 1.1rem; background: linear-gradient(to bottom, #ffd166, #f4a259); border: 3px solid #ffd166; border-radius: 8px; color: #2d3142; cursor: pointer; font-weight: bold; min-width: 120px;">😐 MEDIUM</button>
-                    <button id="hard-btn" class="difficulty-btn" style="padding: 12px 24px; font-size: 1.1rem; background: linear-gradient(to bottom, #ff6b6b, #c92a2a); border: 3px solid #ff6b6b; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 120px;">😈 HARD</button>
+                    <button id="easy-btn" class="difficulty-btn" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #4ecdc4, #3ab0a8); border: 3px solid #4ecdc4; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 100px;">EASY</button>
+                    <button id="medium-btn" class="difficulty-btn selected" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #ffd166, #f4a259); border: 3px solid #ffd166; border-radius: 8px; color: #2d3142; cursor: pointer; font-weight: bold; min-width: 100px;">MEDIUM</button>
+                    <button id="hard-btn" class="difficulty-btn" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #ff6b6b, #c92a2a); border: 3px solid #ff6b6b; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 100px;">HARD</button>
                 </div>
             </div>
             
-            <div class="screen-stats" style="padding: 15px; margin: 10px 0; min-width: 250px;">
+            <div class="screen-stats" style="padding: 10px; margin: 8px 0; min-width: 250px;">
                 <div><span>Stage:</span><span id="start-stage">1</span></div>
                 <div><span>Zombies:</span><span id="start-zombies">200</span></div>
                 <div><span>Ammo:</span><span>20</span></div>
                 <div><span>Lives:</span><span>5</span></div>
             </div>
-            <button id="start-btn" class="btn" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 10px;">NEW GAME</button>
-            <button id="continue-btn" class="btn hidden" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 5px; background: linear-gradient(to bottom, #4ecdc4, #3a9d94);">CONTINUE</button>
+            <button id="start-btn" class="btn" style="padding: 10px 30px; font-size: 1.1rem; margin-top: 8px;">NEW GAME</button>
+            <button id="continue-btn" class="btn hidden" style="padding: 10px 30px; font-size: 1.1rem; margin-top: 5px; background: linear-gradient(to bottom, #4ecdc4, #3a9d94);">CONTINUE</button>
         </div>
         
         <div id="cutscene-screen" class="screen hidden" style="background: black; padding: 0;">
@@ -583,7 +590,7 @@
             ZOMBIES_PER_STAGE: [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100],
             TOTAL_STAGES: 10,
             PLAYER_SPEED: 4,
-            PLAYER_SIZE: 50,
+            PLAYER_SIZE: 75,  // Increased from 50 (50% larger)
             
             // ===== ZOMBIE SPEED (EASY TO ADJUST) =====
             // Lower = slower zombies, Higher = faster zombies
@@ -597,7 +604,7 @@
             BOSS_SPEED: 1.5,
             // =======================================
             
-            ZOMBIE_SIZE: 45,
+            ZOMBIE_SIZE: 68,  // Increased from 45 (50% larger)
             SHOTGUN_DAMAGE: 40,
             SHOTGUN_RANGE: 250,
             SHOTGUN_SPREAD: 0.4,
@@ -640,35 +647,35 @@
         // Leave blank "" to use colored shapes
         // ============================================
         const SPRITES = {
-            player: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/tank-2.png",
-            zombie1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-11.png",
-            zombie2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-11.png",
+            player:  "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/tank-2.png",
+            zombie1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-1.png",
+            zombie2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss%202.png",
             zombie3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-3.png",
-            zombie4: "",
-            zombie5: "",
-            zombie6: "",
-            zombie7: "",
+            zombie4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-12.png",
+            zombie5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-10.png",
+            zombie6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-11.png",
+            zombie7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-7.png",
             zombie8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-8.png",
             zombie9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-9.png",
-            zombie10: "",  // Stage 6 new zombie
-            zombie11: "",  // Stage 7 new zombie
-            zombie12: "",  // Stage 8 new zombie
-            zombie13: "",  // Stage 9 new zombie
-            zombie14: "",  // Stage 10 new zombie
+            zombie10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-12.png",  // Stage 6 new zombie
+            zombie11: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-6.png",  // Stage 7 new zombie
+            zombie12: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-3.png",  // Stage 8 new zombie
+            zombie13: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-1.png",  // Stage 9 new zombie
+            zombie14: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-2.png",  // Stage 10 new zombie
             ammo: "",
             // Boss sprites for each stage
             boss1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-13.png",
-            boss2: "",   // Stage 2 boss
-            boss3: "",   // Stage 3 boss
-            boss4: "",   // Stage 4 boss
-            boss5: "",   // Stage 5 boss
-            boss6: "",   // Stage 6 boss 1
-            boss7: "",   // Stage 7 boss 1
-            boss8: "",   // Stage 8 boss 1
-            boss9: "",   // Stage 9 boss 1
-            boss10: "",  // Stage 10 boss 1
-            boss11: "",  // Stage 10 boss 2
-            boss12: "",  // Stage 10 boss 3
+            boss2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-15.png",   // Stage 2 boss
+            boss3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-14.png",   // Stage 3 boss
+            boss4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-4.png",   // Stage 4 boss
+            boss5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-5.png",   // Stage 5 boss
+            boss6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-6.png",   // Stage 6 boss 1
+            boss7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-7.png",   // Stage 7 boss 1
+            boss8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-8.png",   // Stage 8 boss 1
+            boss9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-9.png",   // Stage 9 boss 1
+            boss10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-10.png",  // Stage 10 boss 1
+            boss11: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-11.png",  // Stage 10 boss 2
+            boss12: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-12.png",  // Stage 10 boss 3
             // 70 Building sprites (building1-building70)
             // Using the Oahu Roofing image you provided
             building1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
@@ -742,23 +749,23 @@
             building69: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
             building70: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
             // Stage-specific background tiles
-            groundTile1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-2.png",   // Stage 1 background
-            groundTile2: "",   // Stage 2 background
-            groundTile3: "",   // Stage 3 background
-            groundTile4: "",   // Stage 4 background
-            groundTile5: "",   // Stage 5 background
-            groundTile6: "",   // Stage 6 background
-            groundTile7: "",   // Stage 7 background
-            groundTile8: "",   // Stage 8 background
-            groundTile9: "",   // Stage 9 background
-            groundTile10: "",   // Stage 10 background
+            groundTile1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-4.png",   // Stage 1 background
+            groundTile2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-5.png",   // Stage 2 background
+            groundTile3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-3.png",   // Stage 3 background
+            groundTile4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-2.png",   // Stage 4 background
+            groundTile5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-1.png",   // Stage 5 background
+            groundTile6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-6.png",   // Stage 6 background
+            groundTile7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-7.png",   // Stage 7 background
+            groundTile8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-8.png",   // Stage 8 background
+            groundTile9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-9.png",   // Stage 9 background
+            groundTile10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-3.png",   // Stage 10 background
             // Cutscene videos (MP4 format) - 30 seconds each
             introCutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays when starting a new game
-            stage1Cutscene: "", // Plays before stage 1 begins
-            stage2Cutscene: "", // Plays before stage 2 begins
-            stage3Cutscene: "", // Plays before stage 3 begins
-            stage4Cutscene: "", // Plays before stage 4 begins
-            stage5Cutscene: "",  // Plays before stage 5 begins
+            stage1Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 1 begins
+            stage2Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 2 begins
+            stage3Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 3 begins
+            stage4Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 4 begins
+            stage5Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4",  // Plays before stage 5 begins
             // Boss weapon sprite
             coconutBomb: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Coconut%20bomb.png"
         };
@@ -770,15 +777,15 @@
         // ============================================
         const STAGE_MUSIC = {
             stage1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
-            stage2: "",   // Stage 2 music
-            stage3: "",   // Stage 3 music
-            stage4: "",   // Stage 4 music
-            stage5: "",   // Stage 5 music
-            stage6: "",   // Stage 6 music
-            stage7: "",   // Stage 7 music
-            stage8: "",   // Stage 8 music
-            stage9: "",   // Stage 9 music
-            stage10: ""   // Stage 10 music
+            stage2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 2 music
+            stage3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 3 music
+            stage4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 4 music
+            stage5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 5 music
+            stage6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 6 music
+            stage7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 7 music
+            stage8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 8 music
+            stage9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 9 music
+            stage10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3"   // Stage 10 music
         };
 
         // Load images
