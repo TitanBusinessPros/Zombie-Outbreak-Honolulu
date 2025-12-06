@@ -234,19 +234,20 @@
             z-index: 200;
             text-align: center;
             padding: 20px;
+            overflow-y: auto;  /* Allow scrolling if content too tall */
         }
         
         .screen-title {
             font-size: 2.5rem;
             color: #ff6b6b;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(255, 107, 107, 0.7);
         }
         
         .screen-subtitle {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #4ecdc4;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             max-width: 800px;
             line-height: 1.5;
         }
@@ -290,6 +291,22 @@
             background: linear-gradient(to bottom, #ff8a8a, #d45555);
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .difficulty-btn {
+            transition: all 0.2s;
+            opacity: 0.7;
+        }
+        
+        .difficulty-btn:hover {
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+        
+        .difficulty-btn.selected {
+            opacity: 1;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
         }
         
         .hidden {
@@ -386,6 +403,41 @@
             #instructions {
                 display: none !important;
             }
+            
+            /* Make start screen scrollable and compact on mobile */
+            .screen-title {
+                font-size: 1.5rem !important;
+                margin-bottom: 3px !important;
+            }
+            
+            .screen-subtitle {
+                font-size: 0.8rem !important;
+                margin-bottom: 5px !important;
+            }
+            
+            .difficulty-btn {
+                padding: 8px 12px !important;
+                font-size: 0.85rem !important;
+                min-width: 80px !important;
+            }
+            
+            .screen-stats {
+                padding: 8px !important;
+                font-size: 0.8rem !important;
+                margin: 5px 0 !important;
+            }
+            
+            .btn {
+                padding: 8px 20px !important;
+                font-size: 0.95rem !important;
+                min-width: 140px !important;
+                margin: 5px !important;
+            }
+            
+            .screen img {
+                max-width: 150px !important;
+                max-height: 80px !important;
+            }
         }
     </style>
 </head>
@@ -446,17 +498,39 @@
         <div id="start-screen" class="screen">
             <button onclick="window.history.back()" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7); border: 2px solid #4a4a4a; border-radius: 8px; color: white; padding: 10px 20px; cursor: pointer; font-size: 1rem; font-weight: bold;">← BACK</button>
             
-            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 250px; max-height: 150px; margin-bottom: 10px;">
-            <h1 class="screen-title" style="font-size: 2.5rem; margin-bottom: 10px;">ZOMBIE SURVIVAL</h1>
-            <p class="screen-subtitle" style="font-size: 1rem; margin-bottom: 15px;">Survive 5 stages of zombies</p>
-            <div class="screen-stats" style="padding: 15px; margin: 10px 0; min-width: 250px;">
+            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 200px; max-height: 100px; margin-bottom: 5px;">
+            <h1 class="screen-title" style="font-size: 2rem; margin-bottom: 5px;">ZOMBIE SURVIVAL</h1>
+            <p class="screen-subtitle" style="font-size: 0.9rem; margin-bottom: 8px;">Survive 10 stages of zombies</p>
+            
+            <div style="margin: 10px 0;">
+                <p style="font-size: 1rem; margin-bottom: 8px; color: #ffd166;">SELECT DIFFICULTY:</p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button id="easy-btn" class="difficulty-btn" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #4ecdc4, #3ab0a8); border: 3px solid #4ecdc4; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 100px;">EASY</button>
+                    <button id="medium-btn" class="difficulty-btn selected" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #ffd166, #f4a259); border: 3px solid #ffd166; border-radius: 8px; color: #2d3142; cursor: pointer; font-weight: bold; min-width: 100px;">MEDIUM</button>
+                    <button id="hard-btn" class="difficulty-btn" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #ff6b6b, #c92a2a); border: 3px solid #ff6b6b; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 100px;">HARD</button>
+                </div>
+            </div>
+            
+            <div class="screen-stats" style="padding: 10px; margin: 8px 0; min-width: 250px;">
                 <div><span>Stage:</span><span id="start-stage">1</span></div>
                 <div><span>Zombies:</span><span id="start-zombies">200</span></div>
                 <div><span>Ammo:</span><span>20</span></div>
-                <div><span>Lives:</span><span>3</span></div>
+                <div><span>Lives:</span><span>5</span></div>
             </div>
-            <button id="start-btn" class="btn" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 10px;">NEW GAME</button>
-            <button id="continue-btn" class="btn hidden" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 5px; background: linear-gradient(to bottom, #4ecdc4, #3a9d94);">CONTINUE</button>
+            <button id="start-btn" class="btn" style="padding: 10px 30px; font-size: 1.1rem; margin-top: 8px;">NEW GAME</button>
+            <button id="continue-btn" class="btn hidden" style="padding: 10px 30px; font-size: 1.1rem; margin-top: 5px; background: linear-gradient(to bottom, #4ecdc4, #3a9d94);">CONTINUE</button>
+        </div>
+        
+        <div id="cutscene-screen" class="screen hidden" style="background: black; padding: 0;">
+            <div id="cutscene-placeholder" style="display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; color: white;">
+                <h1 id="cutscene-title" style="font-size: 4rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,107,107,0.8);">INTRO</h1>
+                <p id="cutscene-subtitle" style="font-size: 1.5rem; opacity: 0.8;">Preparing for battle...</p>
+            </div>
+            <video id="cutscene-video" style="width: 100%; height: 100%; object-fit: contain;" preload="auto">
+                <source id="cutscene-source" src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <button id="skip-cutscene-btn" style="position: absolute; bottom: 30px; right: 30px; background: rgba(0,0,0,0.8); border: 2px solid #fff; border-radius: 8px; color: white; padding: 12px 24px; cursor: pointer; font-size: 1rem; font-weight: bold; z-index: 10; pointer-events: auto;">SKIP →</button>
         </div>
         
         <div id="stage-complete-screen" class="screen hidden">
@@ -512,14 +586,25 @@
             CANVAS_WIDTH: 6000,
             CANVAS_HEIGHT: 6000,
             STARTING_AMMO: 20,
-            STARTING_LIVES: 3,
+            STARTING_LIVES: 5,  // Start with 5 lives instead of 3
             ZOMBIES_PER_STAGE: [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100],
             TOTAL_STAGES: 10,
             PLAYER_SPEED: 4,
-            PLAYER_SIZE: 50,
-            ZOMBIE_SPEED_MIN: 0.5,
-            ZOMBIE_SPEED_MAX: 1.5,
-            ZOMBIE_SIZE: 45,
+            PLAYER_SIZE: 75,  // Increased from 50 (50% larger)
+            
+            // ===== ZOMBIE SPEED (EASY TO ADJUST) =====
+            // Lower = slower zombies, Higher = faster zombies
+            // Examples: 0.5-1.5 = Easy, 1.0-2.0 = Medium, 1.5-3.0 = Hard
+            ZOMBIE_SPEED_MIN: 0.8,
+            ZOMBIE_SPEED_MAX: 2.0,
+            // =========================================
+            
+            // ===== BOSS SPEED (EASY TO ADJUST) =====
+            // Examples: 1.0 = Slow, 1.5 = Medium, 2.0 = Fast
+            BOSS_SPEED: 1.5,
+            // =======================================
+            
+            ZOMBIE_SIZE: 68,  // Increased from 45 (50% larger)
             SHOTGUN_DAMAGE: 40,
             SHOTGUN_RANGE: 250,
             SHOTGUN_SPREAD: 0.4,
@@ -664,7 +749,7 @@
             building69: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
             building70: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
             // Stage-specific background tiles
-            groundTile1: "",   // Stage 1 background
+            groundTile1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-2.png",   // Stage 1 background
             groundTile2: "",   // Stage 2 background
             groundTile3: "",   // Stage 3 background
             groundTile4: "",   // Stage 4 background
@@ -673,7 +758,16 @@
             groundTile7: "",   // Stage 7 background
             groundTile8: "",   // Stage 8 background
             groundTile9: "",   // Stage 9 background
-            groundTile10: ""   // Stage 10 background
+            groundTile10: "",   // Stage 10 background
+            // Cutscene videos (MP4 format) - 30 seconds each
+            introCutscene: "", // Plays when starting a new game
+            stage1Cutscene: "", // Plays before stage 1 begins
+            stage2Cutscene: "", // Plays before stage 2 begins
+            stage3Cutscene: "", // Plays before stage 3 begins
+            stage4Cutscene: "", // Plays before stage 4 begins
+            stage5Cutscene: "",  // Plays before stage 5 begins
+            // Boss weapon sprite
+            coconutBomb: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Coconut%20bomb.png"
         };
 
         // ============================================
@@ -717,8 +811,35 @@
             isInvincible: false,
             bossActive: false,
             bossPlayedSound: false,
-            isPaused: false
+            isPaused: false,
+            difficulty: 'medium'  // easy, medium, or hard
         };
+        
+        // Difficulty presets
+        const DIFFICULTY_PRESETS = {
+            easy: {
+                ZOMBIE_SPEED_MIN: 0.5,
+                ZOMBIE_SPEED_MAX: 1.5,
+                BOSS_SPEED: 1.0,
+                ACID_RANGE: 80,
+                STARTING_LIVES: 7
+            },
+            medium: {
+                ZOMBIE_SPEED_MIN: 0.8,
+                ZOMBIE_SPEED_MAX: 2.0,
+                BOSS_SPEED: 1.5,
+                ACID_RANGE: 100,
+                STARTING_LIVES: 5
+            },
+            hard: {
+                ZOMBIE_SPEED_MIN: 1.2,
+                ZOMBIE_SPEED_MAX: 2.8,
+                BOSS_SPEED: 2.2,
+                ACID_RANGE: 150,
+                STARTING_LIVES: 3
+            }
+        };
+
 
         const player = {
             x: CONFIG.CANVAS_WIDTH / 2,
@@ -729,6 +850,35 @@
         };
 
         const bosses = [];  // Changed to array for multiple bosses
+        const coconutBombs = [];  // Boss projectiles
+        const acidPukes = [];  // Zombie acid attacks
+        
+        // Coconut bomb configuration
+        const BOMB_CONFIG = {
+            SIZE: 30,
+            SPEED: 3,
+            EXPLOSION_RADIUS: 120,
+            EXPLOSION_DAMAGE: 1,
+            THROW_INTERVAL: 3000,  // Boss throws bomb every 3 seconds
+            FUSE_TIME: 2000  // Bomb explodes 2 seconds after thrown
+        };
+        
+        // Acid puke configuration
+        const ACID_CONFIG = {
+            SPLASH_RADIUS: 100,  // Area of effect for acid splash
+            DAMAGE: 1,
+            
+            // ===== ACID PUKE RANGE (EASY TO ADJUST) =====
+            // How close zombie needs to be to puke at you
+            // Examples: 100 = Very Close, 150 = Close, 200 = Medium, 300 = Far
+            RANGE: 100,  // Reduced from 200
+            // ============================================
+            
+            PUKE_INTERVAL_FAST: 5000,  // Zombies 1, 2, 3 puke every 5 seconds
+            PUKE_INTERVAL_SLOW: 10000,  // Zombies 4-14 puke every 10 seconds
+            CLOSE_RANGE: 150,  // Or when within 150px of player
+            SPLASH_DURATION: 1500  // Splash stays on ground for 1.5 seconds
+        };
         const zombies = [];
         const ammoPacks = [];
         const bloodSplatters = [];
@@ -743,6 +893,145 @@
         // Background music
         let backgroundMusic = null;
 
+        // ============================================
+        // CUTSCENE FUNCTIONS
+        // ============================================
+        
+        let currentCutsceneType = null; // Track if we're playing intro or stage
+        
+        function playCutscene(cutsceneType, stage) {
+            currentCutsceneType = cutsceneType; // Remember what type of cutscene this is
+            
+            // Determine which cutscene to play
+            let videoUrl = "";
+            let titleText = "";
+            let subtitleText = "";
+            
+            if (cutsceneType === "intro") {
+                videoUrl = SPRITES.introCutscene;
+                titleText = "ZOMBIE OUTBREAK";
+                subtitleText = "The infection has begun...";
+            } else if (cutsceneType === "stage" && stage >= 1 && stage <= 5) {
+                videoUrl = SPRITES[`stage${stage}Cutscene`];
+                titleText = `STAGE ${stage}`;
+                subtitleText = `${CONFIG.ZOMBIES_PER_STAGE[stage - 1]} zombies incoming...`;
+            }
+            
+            // Show cutscene screen
+            const cutsceneScreen = document.getElementById('cutscene-screen');
+            const cutsceneVideo = document.getElementById('cutscene-video');
+            const cutsceneSource = document.getElementById('cutscene-source');
+            const cutscenePlaceholder = document.getElementById('cutscene-placeholder');
+            const cutsceneTitle = document.getElementById('cutscene-title');
+            const cutsceneSubtitle = document.getElementById('cutscene-subtitle');
+            const skipBtn = document.getElementById('skip-cutscene-btn');
+            
+            // Show cutscene screen
+            cutsceneScreen.classList.remove('hidden');
+            
+            // If video URL exists, play video
+            if (videoUrl) {
+                cutsceneVideo.style.display = 'block';
+                cutscenePlaceholder.style.display = 'none';
+                
+                // Set video source
+                cutsceneSource.src = videoUrl;
+                cutsceneVideo.load();
+                
+                // Play video
+                const playPromise = cutsceneVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(err => {
+                        console.log('Video autoplay failed:', err);
+                        // Show placeholder if video fails
+                        showPlaceholder();
+                    });
+                }
+                
+                // Video ended - move to game
+                cutsceneVideo.onended = () => {
+                    afterCutscene(stage);
+                };
+            } else {
+                // No video URL - show placeholder screen
+                cutsceneVideo.style.display = 'none';
+                showPlaceholder();
+            }
+            
+            function showPlaceholder() {
+                cutsceneVideo.style.display = 'none';
+                cutscenePlaceholder.style.display = 'flex';
+                cutsceneTitle.textContent = titleText;
+                cutsceneSubtitle.textContent = subtitleText;
+                
+                // Auto-advance after 3 seconds
+                setTimeout(() => {
+                    if (!cutsceneScreen.classList.contains('hidden')) {
+                        afterCutscene(stage);
+                    }
+                }, 3000);
+            }
+            
+            // Skip button
+            skipBtn.onclick = () => {
+                if (cutsceneVideo.style.display !== 'none') {
+                    cutsceneVideo.pause();
+                    cutsceneVideo.currentTime = 0;
+                    cutsceneVideo.src = ''; // Fully stop video
+                }
+                afterCutscene(stage);
+            };
+            
+            // Auto-skip after 30 seconds as backup (for videos)
+            if (videoUrl) {
+                setTimeout(() => {
+                    if (!cutsceneScreen.classList.contains('hidden')) {
+                        cutsceneVideo.pause();
+                        cutsceneVideo.currentTime = 0;
+                        cutsceneVideo.src = '';
+                        afterCutscene(stage);
+                    }
+                }, 30000);
+            }
+        }
+        
+        function afterCutscene(stage) {
+            // Stop and reset video
+            const cutsceneVideo = document.getElementById('cutscene-video');
+            cutsceneVideo.pause();
+            cutsceneVideo.currentTime = 0;
+            cutsceneVideo.src = ''; // Clear source to fully stop
+            
+            // Hide cutscene screen
+            document.getElementById('cutscene-screen').classList.add('hidden');
+            
+            // If this was the intro cutscene, play stage 1 cutscene next
+            if (currentCutsceneType === 'intro') {
+                setTimeout(() => {
+                    playCutscene('stage', 1);
+                }, 200);
+            } else if (stage) {
+                // This was a stage cutscene, start the game
+                startStage(stage);
+            }
+        }
+        
+        function startStage(stage) {
+            // Hide all screens
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('stage-complete-screen').classList.add('hidden');
+            
+            // Set stage
+            gameState.stage = stage;
+            
+            // Start the stage
+            startStageDirectly();
+        }
+
+        // ============================================
+        // SAVE/LOAD FUNCTIONS
+        // ============================================
+        
         // Save/Load game functions
         function saveGame() {
             const saveData = {
@@ -893,11 +1182,28 @@
                 if (gameState.zoom > CONFIG.MIN_ZOOM) gameState.zoom -= CONFIG.ZOOM_STEP;
             });
             
+            // Difficulty selection buttons
+            const difficultyButtons = {
+                easy: document.getElementById('easy-btn'),
+                medium: document.getElementById('medium-btn'),
+                hard: document.getElementById('hard-btn')
+            };
+            
+            Object.keys(difficultyButtons).forEach(difficulty => {
+                difficultyButtons[difficulty].addEventListener('click', () => {
+                    // Remove selected class from all buttons
+                    Object.values(difficultyButtons).forEach(btn => btn.classList.remove('selected'));
+                    // Add selected class to clicked button
+                    difficultyButtons[difficulty].classList.add('selected');
+                    // Apply difficulty settings
+                    applyDifficulty(difficulty);
+                });
+            });
+            
             document.getElementById('start-btn').addEventListener('click', () => {
                 clearSave();  // Clear save when starting new game
-                document.getElementById('start-screen').classList.add('hidden');
-                gameState.gameRunning = true;
-                playStageMusic(gameState.stage);
+                // Play intro cutscene first, then it will trigger stage 1 cutscene
+                playCutscene('intro', 1);
             });
             
             document.getElementById('restart-btn').addEventListener('click', restartGame);
@@ -1270,9 +1576,12 @@
             let bossCount = 1;
             let bossIds = [gameState.stage];  // Default: use stage number as boss ID
             
-            if (gameState.stage >= 6 && gameState.stage <= 9) {
+            if (gameState.stage >= 6 && gameState.stage <= 7) {
                 bossCount = 2;
                 bossIds = [gameState.stage, gameState.stage];  // Two of the same boss
+            } else if (gameState.stage === 8 || gameState.stage === 9) {
+                bossCount = 3;  // 3 bosses on stages 8 and 9
+                bossIds = [gameState.stage, gameState.stage, gameState.stage];
             } else if (gameState.stage === 10) {
                 bossCount = 3;
                 bossIds = [10, 11, 12];  // Three different bosses
@@ -1285,7 +1594,7 @@
                     x: CONFIG.CANVAS_WIDTH / 2 + xOffset,
                     y: 100 + (i * 50),
                     size: CONFIG.ZOMBIE_SIZE * 3,
-                    speed: 1.2,
+                    speed: CONFIG.BOSS_SPEED,
                     health: bossHealth,
                     maxHealth: bossHealth,
                     stage: gameState.stage,
@@ -1342,6 +1651,8 @@
             } catch (e) { console.error('applyJoystickMovement error:', e); }
             try { updateZombies(); } catch (e) { console.error('updateZombies error:', e); }
             try { updateBoss(); } catch (e) { console.error('updateBoss error:', e); }
+            try { updateCoconutBombs(); } catch (e) { console.error('updateCoconutBombs error:', e); }
+            try { updateAcidPukes(); } catch (e) { console.error('updateAcidPukes error:', e); }
             try { updateAmmo(); } catch (e) { console.error('updateAmmo error:', e); }
             try { updateBulletTraces(); } catch (e) { console.error('updateBulletTraces error:', e); }
             try { updateHUD(); } catch (e) { console.error('updateHUD error:', e); }
@@ -1369,6 +1680,14 @@
                     boss.y += (dy / distance) * boss.speed;
                 }
                 
+                // Throw coconut bomb at player
+                const now = Date.now();
+                if (!boss.lastBombTime) boss.lastBombTime = now;
+                if (now - boss.lastBombTime > BOMB_CONFIG.THROW_INTERVAL) {
+                    throwCoconutBomb(boss, player.x, player.y);
+                    boss.lastBombTime = now;
+                }
+                
                 // Play boss sound when near player (200 pixels)
                 if (distance < 200 && !boss.soundPlayed) {
                     playBossSound();
@@ -1390,6 +1709,13 @@
                     bloodSplatters.push({x: boss.x, y: boss.y, size: 30 + Math.random() * 20, alpha: 1});
                     // Boss drops lots of ammo
                     ammoPacks.push({x: boss.x, y: boss.y, amount: 30});
+                    
+                    // Award +1 life for killing boss (max 5 lives)
+                    if (gameState.playerLives < 5) {
+                        gameState.playerLives++;
+                        updateLivesDisplay();
+                    }
+                    
                     bosses.splice(i, 1);
                 }
             }
@@ -1415,6 +1741,198 @@
                 osc.stop(ac.currentTime + 0.5);
             } catch(e) {}
         }
+        
+        // ============================================
+        // COCONUT BOMB SYSTEM
+        // ============================================
+        
+        function throwCoconutBomb(boss, targetX, targetY) {
+            const dx = targetX - boss.x;
+            const dy = targetY - boss.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            coconutBombs.push({
+                x: boss.x,
+                y: boss.y,
+                vx: (dx / distance) * BOMB_CONFIG.SPEED,
+                vy: (dy / distance) * BOMB_CONFIG.SPEED,
+                thrownTime: Date.now(),
+                size: BOMB_CONFIG.SIZE
+            });
+        }
+        
+        function updateCoconutBombs() {
+            const now = Date.now();
+            
+            for (let i = coconutBombs.length - 1; i >= 0; i--) {
+                const bomb = coconutBombs[i];
+                
+                // Move bomb
+                bomb.x += bomb.vx;
+                bomb.y += bomb.vy;
+                
+                // Check if bomb should explode (after fuse time)
+                if (now - bomb.thrownTime > BOMB_CONFIG.FUSE_TIME) {
+                    explodeCoconutBomb(bomb);
+                    coconutBombs.splice(i, 1);
+                    continue;
+                }
+                
+                // Remove if off screen
+                if (bomb.x < -100 || bomb.x > CONFIG.CANVAS_WIDTH + 100 ||
+                    bomb.y < -100 || bomb.y > CONFIG.CANVAS_HEIGHT + 100) {
+                    coconutBombs.splice(i, 1);
+                }
+            }
+        }
+        
+        function explodeCoconutBomb(bomb) {
+            // Play explosion sound
+            playExplosionSound();
+            
+            // Create explosion visual effect
+            for (let i = 0; i < 20; i++) {
+                const angle = (Math.PI * 2 * i) / 20;
+                const distance = Math.random() * BOMB_CONFIG.EXPLOSION_RADIUS;
+                bloodSplatters.push({
+                    x: bomb.x + Math.cos(angle) * distance,
+                    y: bomb.y + Math.sin(angle) * distance,
+                    size: 10 + Math.random() * 15,
+                    alpha: 1,
+                    color: 'rgba(255, 150, 0, 0.8)'  // Orange explosion color
+                });
+            }
+            
+            // Check if player is in explosion radius
+            const dx = player.x - bomb.x;
+            const dy = player.y - bomb.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < BOMB_CONFIG.EXPLOSION_RADIUS && !gameState.isInvincible) {
+                takeDamage();
+            }
+        }
+        
+        function playExplosionSound() {
+            try {
+                const ac = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Low boom
+                const o1 = ac.createOscillator();
+                const g1 = ac.createGain();
+                o1.connect(g1);
+                g1.connect(ac.destination);
+                o1.frequency.value = 60;
+                g1.gain.value = 0.3;
+                o1.start(0);
+                g1.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + 0.4);
+                o1.stop(ac.currentTime + 0.4);
+                
+                // High crackle
+                const o2 = ac.createOscillator();
+                const g2 = ac.createGain();
+                o2.connect(g2);
+                g2.connect(ac.destination);
+                o2.type = 'sawtooth';
+                o2.frequency.value = 200;
+                g2.gain.value = 0.15;
+                o2.start(0);
+                g2.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + 0.2);
+                o2.stop(ac.currentTime + 0.2);
+            } catch(e) {}
+        }
+        
+        // ============================================
+        // ACID PUKE SYSTEM (Zombies 1, 2, 3)
+        // ============================================
+        
+        function pukeAcid(zombie, targetX, targetY) {
+            // Determine puke color based on zombie type
+            let pukeColor;
+            if (zombie.type >= 1 && zombie.type <= 3) {
+                pukeColor = { r: 0, g: 255, b: 0 };  // Green
+            } else if (zombie.type >= 4 && zombie.type <= 6) {
+                pukeColor = { r: 255, g: 0, b: 0 };  // Red
+            } else if (zombie.type >= 7 && zombie.type <= 9) {
+                pukeColor = { r: 0, g: 100, b: 255 };  // Blue
+            } else if (zombie.type >= 10 && zombie.type <= 14) {
+                pukeColor = { r: 255, g: 255, b: 0 };  // Yellow
+            } else {
+                pukeColor = { r: 0, g: 255, b: 0 };  // Default green
+            }
+            
+            // Play puke sound
+            playPukeSound();
+            
+            // Create acid splash on ground at target location
+            acidPukes.push({
+                x: targetX,
+                y: targetY,
+                radius: ACID_CONFIG.SPLASH_RADIUS,
+                createdTime: Date.now(),
+                alpha: 1,
+                color: pukeColor
+            });
+            
+            // Create visual splash particles
+            for (let i = 0; i < 15; i++) {
+                const angle = (Math.PI * 2 * i) / 15;
+                const distance = Math.random() * ACID_CONFIG.SPLASH_RADIUS;
+                bloodSplatters.push({
+                    x: targetX + Math.cos(angle) * distance,
+                    y: targetY + Math.sin(angle) * distance,
+                    size: 8 + Math.random() * 12,
+                    alpha: 1,
+                    color: `rgba(${pukeColor.r}, ${pukeColor.g}, ${pukeColor.b}, 0.7)`
+                });
+            }
+        }
+        
+        function updateAcidPukes() {
+            const now = Date.now();
+            
+            for (let i = acidPukes.length - 1; i >= 0; i--) {
+                const acid = acidPukes[i];
+                
+                // Check if player is in splash radius
+                const dx = player.x - acid.x;
+                const dy = player.y - acid.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < acid.radius && !gameState.isInvincible) {
+                    takeDamage();
+                }
+                
+                // Fade out over time
+                const age = now - acid.createdTime;
+                acid.alpha = 1 - (age / ACID_CONFIG.SPLASH_DURATION);
+                
+                // Remove after duration
+                if (age > ACID_CONFIG.SPLASH_DURATION) {
+                    acidPukes.splice(i, 1);
+                }
+            }
+        }
+        
+        function playPukeSound() {
+            try {
+                const ac = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Gurgling low sound
+                const o1 = ac.createOscillator();
+                const g1 = ac.createGain();
+                o1.connect(g1);
+                g1.connect(ac.destination);
+                o1.type = 'sawtooth';
+                o1.frequency.value = 120;
+                o1.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.3);
+                g1.gain.value = 0.2;
+                g1.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + 0.3);
+                o1.start(0);
+                o1.stop(ac.currentTime + 0.3);
+            } catch(e) {}
+        }
+
 
         function updatePlayer() {
             let dx = 0, dy = 0;
@@ -1451,10 +1969,31 @@
         }
 
         function updateZombies() {
+            const now = Date.now();
+            
             for (let i = zombies.length - 1; i >= 0; i--) {
                 const z = zombies[i];
                 const dx = player.x - z.x, dy = player.y - z.y;
                 const d = Math.sqrt(dx*dx + dy*dy);
+                
+                // All zombies (except ghosts) can puke acid
+                if (!z.isGhost) {
+                    if (!z.lastPukeTime) z.lastPukeTime = now;
+                    
+                    // Zombies 1-3 puke every 5 seconds, others every 10 seconds
+                    const pukeInterval = (z.type === 1 || z.type === 2 || z.type === 3) 
+                        ? ACID_CONFIG.PUKE_INTERVAL_FAST 
+                        : ACID_CONFIG.PUKE_INTERVAL_SLOW;
+                    
+                    // Puke at interval OR when close to player
+                    const shouldPuke = (now - z.lastPukeTime > pukeInterval) || 
+                                      (d < ACID_CONFIG.CLOSE_RANGE && now - z.lastPukeTime > 2000);
+                    
+                    if (shouldPuke && d < ACID_CONFIG.RANGE) {
+                        pukeAcid(z, player.x, player.y);
+                        z.lastPukeTime = now;
+                    }
+                }
                 
                 if (d > 0) {
                     const newX = z.x + (dx/d) * z.speed;
@@ -1594,7 +2133,8 @@
             // Blood
             for (let i = bloodSplatters.length - 1; i >= 0; i--) {
                 const s = bloodSplatters[i];
-                ctx.fillStyle = `rgba(139,0,0,${s.alpha})`;
+                const color = s.color || `rgba(139,0,0,${s.alpha})`;
+                ctx.fillStyle = color.includes('rgba') ? color.replace(/[\d.]+\)$/, `${s.alpha})`) : `rgba(139,0,0,${s.alpha})`;
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -1663,16 +2203,63 @@
                     const bossHp = Math.max(0, boss.health / boss.maxHealth);
                     ctx.fillStyle = '#000';
                     ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120, 10);
-                    ctx.fillStyle = '#f00';
-                    ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120, 10);
-                    ctx.fillStyle = '#0f0';
+                    ctx.fillStyle = '#ff0000';
                     ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120 * bossHp, 10);
-                    // Boss label
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 16px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('BOSS', boss.x, boss.y - boss.size/2 - 30);
                 }
+            }
+            
+            // Draw coconut bombs
+            for (const bomb of coconutBombs) {
+                const bombImg = IMG.coconutBomb;
+                
+                if (bombImg && bombImg.complete && bombImg.naturalWidth > 0) {
+                    ctx.save();
+                    ctx.translate(bomb.x, bomb.y);
+                    // Rotate bomb as it flies
+                    const rotation = (Date.now() - bomb.thrownTime) / 100;
+                    ctx.rotate(rotation);
+                    ctx.drawImage(bombImg, -bomb.size/2, -bomb.size/2, bomb.size, bomb.size);
+                    ctx.restore();
+                } else {
+                    // Fallback: brown circle
+                    ctx.fillStyle = '#654321';
+                    ctx.beginPath();
+                    ctx.arc(bomb.x, bomb.y, bomb.size/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Fuse spark
+                    ctx.fillStyle = '#ff4500';
+                    ctx.beginPath();
+                    ctx.arc(bomb.x, bomb.y - bomb.size/2, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // Draw acid splashes (ground pools)
+            for (const acid of acidPukes) {
+                const c = acid.color || { r: 0, g: 255, b: 0 };  // Default green
+                
+                // Draw fading splash circle on ground
+                ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${acid.alpha * 0.4})`;
+                ctx.beginPath();
+                ctx.arc(acid.x, acid.y, acid.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Inner brighter circle
+                const brightR = Math.min(255, c.r + 50);
+                const brightG = Math.min(255, c.g + 50);
+                const brightB = Math.min(255, c.b + 50);
+                ctx.fillStyle = `rgba(${brightR}, ${brightG}, ${brightB}, ${acid.alpha * 0.6})`;
+                ctx.beginPath();
+                ctx.arc(acid.x, acid.y, acid.radius * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Glowing edge
+                ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${acid.alpha * 0.8})`;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(acid.x, acid.y, acid.radius, 0, Math.PI * 2);
+                ctx.stroke();
             }
             
             // Player
@@ -1943,6 +2530,23 @@
                 gameState.playerLives++;
             }
             
+            // Hide stage complete screen
+            document.getElementById('stage-complete-screen').classList.add('hidden');
+            
+            // Play cutscene for stages 2-5, otherwise start immediately
+            if (gameState.stage >= 2 && gameState.stage <= 5) {
+                playCutscene('stage', gameState.stage);
+            } else {
+                // No cutscene for stages 6-10, start immediately
+                startStageDirectly();
+            }
+            
+            // Save progress
+            saveGame();
+        }
+        
+        function startStageDirectly() {
+            // Setup stage without cutscene
             gameState.zombiesLeft = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
             gameState.zombiesKilled = 0;
             zombies.length = 0;
@@ -1957,16 +2561,12 @@
             spawnHiddenAmmo();
             spawnBoss();  // Spawn boss(es) on every stage
             
-            document.getElementById('stage-complete-screen').classList.add('hidden');
             gameState.stageComplete = false;
             gameState.gameRunning = true;
             updateLivesDisplay();
             
             // Play new stage music
             playStageMusic(gameState.stage);
-            
-            // Save progress
-            saveGame();
         }
 
         function gameOver() {
@@ -1979,6 +2579,21 @@
             document.getElementById('game-over-screen').classList.remove('hidden');
         }
 
+        function applyDifficulty(difficulty) {
+            gameState.difficulty = difficulty;
+            const preset = DIFFICULTY_PRESETS[difficulty];
+            
+            // Apply difficulty settings
+            CONFIG.ZOMBIE_SPEED_MIN = preset.ZOMBIE_SPEED_MIN;
+            CONFIG.ZOMBIE_SPEED_MAX = preset.ZOMBIE_SPEED_MAX;
+            CONFIG.BOSS_SPEED = preset.BOSS_SPEED;
+            ACID_CONFIG.RANGE = preset.ACID_RANGE;
+            CONFIG.STARTING_LIVES = preset.STARTING_LIVES;
+            
+            // Update lives display
+            gameState.playerLives = preset.STARTING_LIVES;
+        }
+        
         function restartGame() {
             stopStageMusic();
             clearSave();  // Clear save on restart
