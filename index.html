@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zombie Outbreak Honolulu</title>
+    <title>Zombie City Survival</title>
     <link rel="icon" type="image/png" href="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Favicon.png">
     <style>
         * {
@@ -47,62 +47,47 @@
             top: 15px;
             left: 15px;
             background: rgba(0, 0, 0, 0.7);
-            padding: 12px 20px;
             border-radius: 8px;
             border: 2px solid #4a4a4a;
             pointer-events: auto;
             min-width: 220px;
-            transition: opacity 0.3s;
+            transition: all 0.3s ease;
         }
         
-        #hud.collapsed {
-            display: none;
+        #hud-header {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #hud-header h2 {
+            color: #ff6b6b;
+            font-size: 1.2rem;
+            margin: 0;
         }
         
         #hud-toggle {
-            display: block;
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #4a4a4a;
-            border-radius: 8px;
-            color: white;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-weight: bold;
-            z-index: 101;
-            pointer-events: auto;
-            font-size: 0.9rem;
-        }
-        
-        #mini-stats {
-            display: none;
-            position: absolute;
-            bottom: 190px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #4a4a4a;
-            border-radius: 8px;
-            padding: 8px 15px;
-            pointer-events: none;
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
-        
-        #mini-stats span {
-            margin: 0 10px;
             color: #4ecdc4;
-            font-weight: bold;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
         }
         
-        /* Hide mini-stats - not needed with stats button */
+        #hud-toggle.open {
+            transform: rotate(180deg);
+        }
         
-        #hud h2 {
-            color: #ff6b6b;
-            margin-bottom: 8px;
-            font-size: 1.2rem;
+        #hud-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+        
+        #hud-content.open {
+            max-height: 300px;
+            padding: 0 20px 12px 20px;
         }
         
         .hud-item {
@@ -135,25 +120,6 @@
         
         .life-heart.empty {
             color: #555;
-        }
-        
-        #weapon-info {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 2px solid #4a4a4a;
-            pointer-events: auto;
-            text-align: center;
-            display: none !important;
-        }
-        
-        #weapon-name {
-            color: #ffd166;
-            font-size: 1.3rem;
-            margin-bottom: 5px;
         }
         
         #zoom-controls {
@@ -234,7 +200,6 @@
             z-index: 200;
             text-align: center;
             padding: 20px;
-            overflow-y: auto;  /* Allow scrolling if content too tall */
         }
         /* Loading Screen */
         #loading-screen {
@@ -242,28 +207,23 @@
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300;
         }
-        #loading-logo { 
-            max-width: 300px; max-height: 150px; margin-bottom: 30px; }
-        #loading-title { 
-            font-size: 2.5rem; color: #ff6b6b; margin-bottom: 20px; }
-        #loading-bar-container { 
-           width: 400px; max-width: 80%; height: 30px; background: rgba(0, 0, 0, 0.5); border: 3px solid #4a4a4a; border-radius: 15px; overflow: hidden; margin-bottom: 15px; }
-        #loading-bar { 
-            width: 0%; height: 100%; background: linear-gradient(90deg, #4ecdc4, #ff6b6b); transition: width 0.3s ease; }
-        #loading-percentage { 
-            font-size: 2rem; color: #ffd166; font-weight: bold; }
-  
+        #loading-logo { max-width: 300px; max-height: 150px; margin-bottom: 30px; }
+        #loading-title { font-size: 2.5rem; color: #ff6b6b; margin-bottom: 20px; }
+        #loading-bar-container { width: 400px; max-width: 80%; height: 30px; background: rgba(0, 0, 0, 0.5); border: 3px solid #4a4a4a; border-radius: 15px; overflow: hidden; margin-bottom: 15px; }
+        #loading-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #4ecdc4, #ff6b6b); transition: width 0.3s ease; }
+        #loading-percentage { font-size: 2rem; color: #ffd166; font-weight: bold; }
+        
         .screen-title {
             font-size: 2.5rem;
             color: #ff6b6b;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             text-shadow: 0 0 10px rgba(255, 107, 107, 0.7);
         }
         
         .screen-subtitle {
-            font-size: 1rem;
+            font-size: 1.2rem;
             color: #4ecdc4;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             max-width: 800px;
             line-height: 1.5;
         }
@@ -309,22 +269,6 @@
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
         }
         
-        .difficulty-btn {
-            transition: all 0.2s;
-            opacity: 0.7;
-        }
-        
-        .difficulty-btn:hover {
-            transform: translateY(-2px);
-            opacity: 1;
-        }
-        
-        .difficulty-btn.selected {
-            opacity: 1;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-            transform: scale(1.05);
-        }
-        
         .hidden {
             display: none !important;
         }
@@ -345,8 +289,8 @@
             position: absolute;
             bottom: 20px;
             left: 20px;
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             background: rgba(100, 100, 100, 0.3);
             border: 3px solid rgba(255, 255, 255, 0.4);
             border-radius: 50%;
@@ -355,8 +299,8 @@
         
         #joystick-stick {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             background: rgba(255, 255, 255, 0.6);
             border: 3px solid rgba(255, 255, 255, 0.8);
             border-radius: 50%;
@@ -390,114 +334,70 @@
             }
             
             #zoom-controls {
-                display: none !important;
-            }
-            
-            #weapon-info {
-                display: none !important;
+                display: none;
             }
             
             #pause-btn {
                 width: 40px !important;
                 height: 40px !important;
                 font-size: 1.2rem !important;
-                top: 15px !important;
-                right: 15px !important;
             }
             
             #hud {
-                top: 70px !important;
-                left: 15px !important;
-                font-size: 0.85rem;
-                max-width: 200px;
-            }
-            
-            #hud.collapsed {
-                display: none;
+                font-size: 0.9rem;
+                top: 15px !important;
             }
             
             #instructions {
                 display: none !important;
-            }
-            
-            /* Make start screen scrollable and compact on mobile */
-            .screen-title {
-                font-size: 1.5rem !important;
-                margin-bottom: 3px !important;
-            }
-            
-            .screen-subtitle {
-                font-size: 0.8rem !important;
-                margin-bottom: 5px !important;
-            }
-            
-            .difficulty-btn {
-                padding: 8px 12px !important;
-                font-size: 0.85rem !important;
-                min-width: 80px !important;
-            }
-            
-            .screen-stats {
-                padding: 8px !important;
-                font-size: 0.8rem !important;
-                margin: 5px 0 !important;
-            }
-            
-            .btn {
-                padding: 8px 20px !important;
-                font-size: 0.95rem !important;
-                min-width: 140px !important;
-                margin: 5px !important;
-            }
-            
-            .screen img {
-                max-width: 150px !important;
-                max-height: 80px !important;
             }
         }
     </style>
 </head>
 <body>
     <div id="game-container">
-        <div id="loading-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; text-align: center;">
-            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" style="max-width: 300px; margin-bottom: 30px;">
-            <h1 style="font-size: 2.5rem; color: #ff6b6b; margin-bottom: 20px;">LOADING GAME</h1>
-            <div style="width: 400px; max-width: 80%; height: 30px; background: rgba(0, 0, 0, 0.5); border: 3px solid #4a4a4a; border-radius: 15px; overflow: hidden; margin-bottom: 15px;">
-                <div id="loading-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4ecdc4, #ff6b6b); transition: width 0.3s ease;"></div>
-            </div>
-            <p id="loading-percentage" style="font-size: 2rem; color: #ffd166; font-weight: bold;">0%</p>
+      <div id="loading-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300;">
+        <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" style="max-width: 300px; margin-bottom: 30px;">
+        <h1 style="font-size: 2.5rem; color: #ff6b6b; margin-bottom: 20px;">LOADING</h1>
+        <div style="width: 400px; max-width: 80%; height: 30px; background: rgba(0, 0, 0, 0.5); border: 3px solid #4a4a4a; border-radius: 15px; overflow: hidden; margin-bottom: 15px;">
+            <div id="loading-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4ecdc4, #ff6b6b); transition: width 0.3s ease;"></div>
         </div>
+        <p id="loading-percentage" style="font-size: 2rem; color: #ffd166; font-weight: bold;">0%</p>
+    </div>
         <canvas id="game-canvas"></canvas>
         
         <div id="game-ui">
-            <button id="hud-toggle">📊 STATS</button>
-            
-            <div id="hud" class="collapsed">
-                <h2>ZOMBIE SURVIVAL</h2>
-                <div class="hud-item">
-                    <span>Stage:</span>
-                    <span id="stage" class="hud-value">1</span>
+            <div id="hud">
+                <div id="hud-header">
+                    <h2>ZOMBIE SURVIVAL</h2>
+                    <span id="hud-toggle">▼</span>
                 </div>
-                <div class="hud-item">
-                    <span>Left:</span>
-                    <span id="zombies-left" class="hud-value">200</span>
-                </div>
-                <div class="hud-item">
-                    <span>Killed:</span>
-                    <span id="zombies-killed" class="hud-value">0</span>
-                </div>
-                <div class="hud-item">
-                    <span>Ammo:</span>
-                    <span id="ammo-count" class="hud-value">20</span>
-                </div>
-                <div id="lives-container">
-                    <span>Lives:</span>
-                    <div id="lives-display">
-                        <span class="life-heart">♥</span>
-                        <span class="life-heart">♥</span>
-                        <span class="life-heart">♥</span>
-                        <span class="life-heart">♥</span>
-                        <span class="life-heart">♥</span>
+                <div id="hud-content">
+                    <div class="hud-item">
+                        <span>Stage:</span>
+                        <span id="stage" class="hud-value">1</span>
+                    </div>
+                    <div class="hud-item">
+                        <span>Left:</span>
+                        <span id="zombies-left" class="hud-value">200</span>
+                    </div>
+                    <div class="hud-item">
+                        <span>Killed:</span>
+                        <span id="zombies-killed" class="hud-value">0</span>
+                    </div>
+                    <div class="hud-item">
+                        <span>Ammo:</span>
+                        <span id="ammo-count" class="hud-value">20</span>
+                    </div>
+                    <div id="lives-container">
+                        <span>Lives:</span>
+                        <div id="lives-display">
+                            <span class="life-heart">♥</span>
+                            <span class="life-heart">♥</span>
+                            <span class="life-heart">♥</span>
+                            <span class="life-heart">♥</span>
+                            <span class="life-heart">♥</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -520,41 +420,17 @@
         </div>
         
         <div id="start-screen" class="screen">
-            <button onclick="window.history.back()" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7); border: 2px solid #4a4a4a; border-radius: 8px; color: white; padding: 10px 20px; cursor: pointer; font-size: 1rem; font-weight: bold;">← BACK</button>
-            
-            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 200px; max-height: 100px; margin-bottom: 5px;">
-            <h1 class="screen-title" style="font-size: 2rem; margin-bottom: 5px;">ZOMBIE SURVIVAL GAME </h1>
-            <p class="screen-subtitle" style="font-size: 0.9rem; margin-bottom: 8px;">Survive 10 stages of zombies! Game is in development and currently being modified & tested. Zombie Counter Is Broken But Stages Complete. Beware that each boss doubles in HP each level. The last stage has three boss zombies!!!</p>
-            
-            <div style="margin: 10px 0;">
-                <p style="font-size: 1rem; margin-bottom: 8px; color: #ffd166;">SELECT DIFFICULTY:</p>
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <button id="easy-btn" class="difficulty-btn" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #4ecdc4, #3ab0a8); border: 3px solid #4ecdc4; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 100px;">EASY</button>
-                    <button id="medium-btn" class="difficulty-btn selected" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #ffd166, #f4a259); border: 3px solid #ffd166; border-radius: 8px; color: #2d3142; cursor: pointer; font-weight: bold; min-width: 100px;">MEDIUM</button>
-                    <button id="hard-btn" class="difficulty-btn" style="padding: 10px 20px; font-size: 1rem; background: linear-gradient(to bottom, #ff6b6b, #c92a2a); border: 3px solid #ff6b6b; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; min-width: 100px;">HARD</button>
-                </div>
-            </div>
-            
-            <div class="screen-stats" style="padding: 10px; margin: 8px 0; min-width: 250px;">
+            <img src="https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/ZOH-Logo-real.png" alt="Zombie Outbreak Honolulu" style="max-width: 250px; max-height: 150px; margin-bottom: 10px;">
+            <h1 class="screen-title" style="font-size: 2.5rem; margin-bottom: 10px;">ZOMBIE SURVIVAL</h1>
+            <p class="screen-subtitle" style="font-size: 1rem; margin-bottom: 15px;">Survive 5 stages of zombies</p>
+            <div class="screen-stats" style="padding: 15px; margin: 10px 0; min-width: 250px;">
                 <div><span>Stage:</span><span id="start-stage">1</span></div>
                 <div><span>Zombies:</span><span id="start-zombies">200</span></div>
                 <div><span>Ammo:</span><span>20</span></div>
-                <div><span>Lives:</span><span>5</span></div>
+                <div><span>Lives:</span><span>3</span></div>
             </div>
-            <button id="start-btn" class="btn" style="padding: 10px 30px; font-size: 1.1rem; margin-top: 8px;">NEW GAME</button>
-            <button id="continue-btn" class="btn hidden" style="padding: 10px 30px; font-size: 1.1rem; margin-top: 5px; background: linear-gradient(to bottom, #4ecdc4, #3a9d94);">CONTINUE</button>
-        </div>
-        
-        <div id="cutscene-screen" class="screen hidden" style="background: black; padding: 0;">
-            <div id="cutscene-placeholder" style="display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; color: white;">
-                <h1 id="cutscene-title" style="font-size: 4rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,107,107,0.8);">INTRO</h1>
-                <p id="cutscene-subtitle" style="font-size: 1.5rem; opacity: 0.8;">Preparing for battle...</p>
-            </div>
-            <video id="cutscene-video" style="width: 100%; height: 100%; object-fit: contain;" preload="auto">
-                <source id="cutscene-source" src="" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <button id="skip-cutscene-btn" style="position: absolute; bottom: 30px; right: 30px; background: rgba(0,0,0,0.8); border: 2px solid #fff; border-radius: 8px; color: white; padding: 12px 24px; cursor: pointer; font-size: 1rem; font-weight: bold; z-index: 10; pointer-events: auto;">SKIP →</button>
+            <button id="start-btn" class="btn" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 10px;">NEW GAME</button>
+            <button id="continue-btn" class="btn hidden" style="padding: 12px 35px; font-size: 1.2rem; margin-top: 5px; background: linear-gradient(to bottom, #4ecdc4, #3a9d94);">CONTINUE</button>
         </div>
         
         <div id="stage-complete-screen" class="screen hidden">
@@ -567,7 +443,6 @@
                 <div><span>Next Wave:</span><span id="next-stage-zombies">300</span></div>
             </div>
             <button id="next-stage-btn" class="btn">NEXT STAGE</button>
-            <button onclick="window.history.back()" class="btn" style="background: linear-gradient(to bottom, #4a4a4a, #2a2a2a); border-color: #666; margin-top: 10px;">← BACK TO GAMES</button>
         </div>
         
         <div id="game-over-screen" class="screen hidden">
@@ -579,7 +454,6 @@
                 <div><span>Ammo:</span><span id="final-ammo">0</span></div>
             </div>
             <button id="restart-btn" class="btn">RESTART</button>
-            <button onclick="window.history.back()" class="btn" style="background: linear-gradient(to bottom, #4a4a4a, #2a2a2a); border-color: #666; margin-top: 10px;">← BACK TO GAMES</button>
         </div>
         
         <div id="pause-screen" class="screen hidden">
@@ -593,7 +467,15 @@
             </div>
             <button id="resume-btn" class="btn">RESUME</button>
             <button id="quit-btn" class="btn" style="background: linear-gradient(to bottom, #666, #444); border-color: #888;">QUIT TO MENU</button>
-            <button onclick="window.history.back()" class="btn" style="background: linear-gradient(to bottom, #4a4a4a, #2a2a2a); border-color: #666; margin-top: 10px;">← BACK TO GAMES</button>
+        </div>
+        
+        <div id="cutscene-screen" class="screen hidden" style="background: rgba(0, 0, 0, 1);">
+            <video id="cutscene-video" style="max-width: 90%; max-height: 90%; width: auto; height: auto;" playsinline webkit-playsinline preload="auto">
+                <source src="https://github.com/TitanBusinessPros/ZOH-Gamevile/raw/main/ZOH-AD-2.mp4" type="video/mp4">
+            </video>
+            <div id="skip-cutscene-btn" style="position: absolute; bottom: 30px; right: 30px; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; pointer-events: auto; display: none;">
+                Click to Skip (5s)
+            </div>
         </div>
         
         <!-- Mobile Controls -->
@@ -607,33 +489,37 @@
 
     <script>
         const CONFIG = {
-            CANVAS_WIDTH: 6000,
-            CANVAS_HEIGHT: 6000,
-            STARTING_AMMO: 20,
-            STARTING_LIVES: 5,  // Start with 5 lives instead of 3
-            ZOMBIES_PER_STAGE: [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100],
+            CANVAS_WIDTH: 3000,
+            CANVAS_HEIGHT: 3000,
+            STARTING_AMMO: 120,
+            STARTING_LIVES: 20,
+            ZOMBIES_PER_STAGE: [50, 100, 150, 200, 250, 300, 350, 400, 450, 500],
             TOTAL_STAGES: 10,
-            PLAYER_SPEED: 4,
-            PLAYER_SIZE: 75,  // Increased from 50 (50% larger)
-            
-            // ===== ZOMBIE SPEED (EASY TO ADJUST) =====
-            // Lower = slower zombies, Higher = faster zombies
-            // Examples: 0.5-1.5 = Easy, 1.0-2.0 = Medium, 1.5-3.0 = Hard
-            ZOMBIE_SPEED_MIN: 0.8,
-            ZOMBIE_SPEED_MAX: 2.0,
-            // =========================================
-            
-            // ===== BOSS SPEED (EASY TO ADJUST) =====
-            // Examples: 1.0 = Slow, 1.5 = Medium, 2.0 = Fast
-            BOSS_SPEED: 1.5,
-            // =======================================
-            
-            ZOMBIE_SIZE: 68,  // Increased from 45 (50% larger)
-            SHOTGUN_DAMAGE: 40,
-            SHOTGUN_RANGE: 250,
+            PLAYER_SPEED: 8,
+            PLAYER_SIZE: 100,
+            ZOMBIE_SPEED_MIN: 0.5,
+            ZOMBIE_SPEED_MAX: 0.8,
+            ZOMBIE_SIZE: 75,
+            // Shotgun
+            SHOTGUN_DAMAGE: 140,
+            SHOTGUN_RANGE: 350,
             SHOTGUN_SPREAD: 0.4,
             SHOTGUN_PELLETS: 6,
             SHOTGUN_FIRE_RATE: 800,
+            // Fire Gun
+            FIRE_GUN_DAMAGE: 25,
+            FIRE_GUN_RANGE: 200,
+            FIRE_GUN_SPREAD: 2.15,
+            FIRE_GUN_FIRE_RATE: 300,
+            FIRE_GUN_BURN_DAMAGE: 15,
+            FIRE_GUN_BURN_DURATION: 9000,
+            // Ice Gun
+            ICE_GUN_DAMAGE: 30,
+            ICE_GUN_RANGE: 280,
+            ICE_GUN_SPREAD: 2.2,
+            ICE_GUN_FIRE_RATE: 500,
+            ICE_GUN_SLOW_FACTOR: 2.5,
+            ICE_GUN_SLOW_DURATION: 6000,
             AMMO_DROP_CHANCE: 0.3,
             HIDDEN_AMMO_COUNT: 50,
             MIN_ZOOM: 0.5,
@@ -641,157 +527,59 @@
             DEFAULT_ZOOM: 1,
             ZOOM_STEP: 0.25,
             INVINCIBILITY_TIME: 1000,
-            BUILDING_WIDTH: 150,
-            BUILDING_HEIGHT: 150
+            // Portal System Configuration
+            PORTAL_HEALTH: 5000,
+            PORTAL_SPAWN_INTERVAL: 180000, // 3 minutes in milliseconds
+            PORTAL_SIZE: 100,
+            PORTAL_WARN_TIME: 5000, // 5 seconds warning before spawn
+            MAX_ACTIVE_CLONES: 5,
+            CLONE_DAMAGE_SCALE: 1.0,
+            CLONE_SPAWN_INVULN_TIME: 1000
         };
 
-        // Fixed building positions (same every stage)
-        const BUILDING_POSITIONS = [
-            // First 5x5 grid (original 25)
-            {x: 400, y: 400}, {x: 900, y: 400}, {x: 1400, y: 400}, {x: 1900, y: 400}, {x: 2400, y: 400},
-            {x: 400, y: 900}, {x: 900, y: 900}, {x: 1400, y: 900}, {x: 1900, y: 900}, {x: 2400, y: 900},
-            {x: 400, y: 1400}, {x: 900, y: 1400}, {x: 1400, y: 1400}, {x: 1900, y: 1400}, {x: 2400, y: 1400},
-            {x: 400, y: 1900}, {x: 900, y: 1900}, {x: 1400, y: 1900}, {x: 1900, y: 1900}, {x: 2400, y: 1900},
-            {x: 400, y: 2400}, {x: 900, y: 2400}, {x: 1400, y: 2400}, {x: 1900, y: 2400}, {x: 2400, y: 2400},
-            // Second 5x5 grid (new 25)
-            {x: 3200, y: 400}, {x: 3700, y: 400}, {x: 4200, y: 400}, {x: 4700, y: 400}, {x: 5200, y: 400},
-            {x: 3200, y: 900}, {x: 3700, y: 900}, {x: 4200, y: 900}, {x: 4700, y: 900}, {x: 5200, y: 900},
-            {x: 3200, y: 1400}, {x: 3700, y: 1400}, {x: 4200, y: 1400}, {x: 4700, y: 1400}, {x: 5200, y: 1400},
-            {x: 3200, y: 1900}, {x: 3700, y: 1900}, {x: 4200, y: 1900}, {x: 4700, y: 1900}, {x: 5200, y: 1900},
-            {x: 3200, y: 2400}, {x: 3700, y: 2400}, {x: 4200, y: 2400}, {x: 4700, y: 2400}, {x: 5200, y: 2400},
-            // Bottom section buildings
-            {x: 800, y: 3200}, {x: 1600, y: 3200}, {x: 2400, y: 3200}, {x: 3200, y: 3200}, {x: 4000, y: 3200},
-            {x: 800, y: 4000}, {x: 1600, y: 4000}, {x: 2400, y: 4000}, {x: 3200, y: 4000}, {x: 4000, y: 4000},
-            {x: 800, y: 4800}, {x: 1600, y: 4800}, {x: 2400, y: 4800}, {x: 3200, y: 4800}, {x: 4000, y: 4800},
-            {x: 800, y: 5400}, {x: 1600, y: 5400}, {x: 2400, y: 5400}, {x: 3200, y: 5400}, {x: 4000, y: 5400}
-        ];
-
         // ============================================
-        // PASTE YOUR IMAGE URLS HERE (LINE 302)
+        // PASTE YOUR IMAGE URLS HERE
         // Leave blank "" to use colored shapes
         // ============================================
         const SPRITES = {
-            player:  "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/tank-2.png",
-            zombie1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-1.png",
-            zombie2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss%202.png",
-            zombie3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-3.png",
-            zombie4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-12.png",
-            zombie5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-10.png",
+            player: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/tank-2.png",
+            zombie1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-3.png",
+            zombie2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-6.png",
+            zombie3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-10.png",
+            zombie4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-7.png",
+            zombie5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-5.png",
             zombie6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-11.png",
-            zombie7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-7.png",
+            zombie7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-12.png",
             zombie8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-8.png",
             zombie9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-9.png",
-            zombie10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-12.png",  // Stage 6 new zombie
-            zombie11: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-6.png",  // Stage 7 new zombie
-            zombie12: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-3.png",  // Stage 8 new zombie
-            zombie13: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-1.png",  // Stage 9 new zombie
-            zombie14: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-2.png",  // Stage 10 new zombie
+            zombie10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-4.png",
+            zombie11: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Zombie-1.png",
+            zombie12: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss%202.png",
+            zombie13: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-1.png",
+            zombie14: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-3.png",
             ammo: "",
-            // Boss sprites for each stage
             boss1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-13.png",
-            boss2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-15.png",   // Stage 2 boss
-            boss3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-14.png",   // Stage 3 boss
-            boss4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-4.png",   // Stage 4 boss
-            boss5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-5.png",   // Stage 5 boss
-            boss6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-6.png",   // Stage 6 boss 1
-            boss7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-7.png",   // Stage 7 boss 1
-            boss8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-8.png",   // Stage 8 boss 1
-            boss9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-9.png",   // Stage 9 boss 1
-            boss10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-10.png",  // Stage 10 boss 1
-            boss11: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-11.png",  // Stage 10 boss 2
-            boss12: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-12.png",  // Stage 10 boss 3
-            // 70 Building sprites (building1-building70)
-            // Using the Oahu Roofing image you provided
-            building1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Building-2.png",
-            building2: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/HSS-B-2.png",
-            building3: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Lucky-Strike-B-3.png",
-            building4: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Hapa-B-4.png",
-            building5: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Other-Realms-B-5.png",
-            building6: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Shaka-B-6.png",
-            building7: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Blue-P-B-7.png",
-            building8: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Pit-Stop-B-8.png",
-            building9: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Top-Gun-B-9.png",
-            building10: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Pawn-Shop-B-10.png",
-            building11: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/S-Love-B-11.png",
-            building12: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Kapa-B-12.png",
-            building13: "https://github.com/TitanBusinessPros/ZOH-Buildings/raw/main/Angry-B-13.png",
-            building14: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building15: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building16: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building17: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building18: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building19: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building20: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building21: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building22: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building23: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building24: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building25: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building26: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building27: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building28: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building29: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building30: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building31: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building32: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building33: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building34: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building35: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building36: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building37: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building38: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building39: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building40: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building41: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building42: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building43: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building44: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building45: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building46: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building47: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building48: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building49: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building50: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building51: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building52: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building53: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building54: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building55: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building56: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building57: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building58: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building59: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building60: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building61: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building62: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building63: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building64: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building65: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building66: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building67: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building68: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building69: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            building70: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Oahu Roofing.png",
-            // Stage-specific background tiles
-            groundTile1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-4.png",   // Stage 1 background
-            groundTile2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-5.png",   // Stage 2 background
-            groundTile3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-3.png",   // Stage 3 background
-            groundTile4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-2.png",   // Stage 4 background
-            groundTile5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-1.png",   // Stage 5 background
-            groundTile6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-6.png",   // Stage 6 background
-            groundTile7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-7.png",   // Stage 7 background
-            groundTile8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-8.png",   // Stage 8 background
-            groundTile9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-9.png",   // Stage 9 background
-            groundTile10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-3.png",   // Stage 10 background
-            // Cutscene videos (MP4 format) - 30 seconds each
-            introCutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays when starting a new game
-            stage1Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 1 begins
-            stage2Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 2 begins
-            stage3Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 3 begins
-            stage4Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4", // Plays before stage 4 begins
-            stage5Cutscene: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Ad-1-Zombie.mp4",  // Plays before stage 5 begins
-            // Boss weapon sprite
-            coconutBomb: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Coconut%20bomb.png"
+            boss2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-1.png",
+            boss3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-12.png",
+            boss4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-3.png",
+            boss5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-4.png",
+            boss6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-5.png",
+            boss7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-6.png",
+            boss8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-7.png",
+            boss9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-8.png",
+            boss10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-12.png",
+            boss11: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-14.png",
+            boss12: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Boss-15.png",
+            groundTile1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-4.png",
+            groundTile2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-1.png",
+            groundTile3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-2.png",
+            groundTile4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-8.png",
+            groundTile5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-9.png",
+            groundTile6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-3.png",
+            groundTile7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-5.png",
+            groundTile8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-6.png",
+            groundTile9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-7.png",
+            groundTile10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Tile-4.png"
         };
 
         // ============================================
@@ -801,18 +589,19 @@
         // ============================================
         const STAGE_MUSIC = {
             stage1: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
-            stage2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 2 music
-            stage3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 3 music
-            stage4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 4 music
-            stage5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 5 music
-            stage6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 6 music
-            stage7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 7 music
-            stage8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 8 music
-            stage9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",   // Stage 9 music
-            stage10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3"   // Stage 10 music
+            stage2: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage3: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage4: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage5: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage6: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage7: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage8: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage9: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3",
+            stage10: "https://github.com/TitanBusinessPros/Zombie-Outbreak-Honolulu/raw/main/Stage-1-song.mp3"
         };
 
         // Load images
+        // Load images with preloading
         const IMG = {};
         let loadedImages = 0, totalImages = 0;
 
@@ -847,7 +636,8 @@
         let gameState = {
             stage: 1,
             zombiesKilled: 0,
-            zombiesLeft: CONFIG.ZOMBIES_PER_STAGE[0],
+            zombiesRemaining: CONFIG.ZOMBIES_PER_STAGE[0],
+            zombiesToSpawn: CONFIG.ZOMBIES_PER_STAGE[0],
             playerLives: CONFIG.STARTING_LIVES,
             playerAmmo: CONFIG.STARTING_AMMO,
             totalAmmoCollected: 0,
@@ -861,34 +651,15 @@
             bossActive: false,
             bossPlayedSound: false,
             isPaused: false,
-            difficulty: 'medium'  // easy, medium, or hard
-        };
-        
-        // Difficulty presets
-        const DIFFICULTY_PRESETS = {
-            easy: {
-                ZOMBIE_SPEED_MIN: 0.5,
-                ZOMBIE_SPEED_MAX: 1.5,
-                BOSS_SPEED: 1.0,
-                ACID_RANGE: 80,
-                STARTING_LIVES: 7
-            },
-            medium: {
-                ZOMBIE_SPEED_MIN: 0.8,
-                ZOMBIE_SPEED_MAX: 2.0,
-                BOSS_SPEED: 1.5,
-                ACID_RANGE: 100,
-                STARTING_LIVES: 5
-            },
-            hard: {
-                ZOMBIE_SPEED_MIN: 1.2,
-                ZOMBIE_SPEED_MAX: 2.8,
-                BOSS_SPEED: 2.2,
-                ACID_RANGE: 150,
-                STARTING_LIVES: 3
-            }
+            // Portal system state
+            portalActive: false,
+            portalDestroyed: false,
+            // Weapon system
+            currentWeapon: 'shotgun' // 'shotgun', 'fire', 'ice'
         };
 
+        // Portal object - will be initialized per stage
+        let activePortal = null;
 
         const player = {
             x: CONFIG.CANVAS_WIDTH / 2,
@@ -898,41 +669,15 @@
             angle: 0
         };
 
-        const bosses = [];  // Changed to array for multiple bosses
-        const coconutBombs = [];  // Boss projectiles
-        const acidPukes = [];  // Zombie acid attacks
-        
-        // Coconut bomb configuration
-        const BOMB_CONFIG = {
-            SIZE: 30,
-            SPEED: 3,
-            EXPLOSION_RADIUS: 120,
-            EXPLOSION_DAMAGE: 1,
-            THROW_INTERVAL: 3000,  // Boss throws bomb every 3 seconds
-            FUSE_TIME: 2000  // Bomb explodes 2 seconds after thrown
-        };
-        
-        // Acid puke configuration
-        const ACID_CONFIG = {
-            SPLASH_RADIUS: 100,  // Area of effect for acid splash
-            DAMAGE: 1,
-            
-            // ===== ACID PUKE RANGE (EASY TO ADJUST) =====
-            // How close zombie needs to be to puke at you
-            // Examples: 100 = Very Close, 150 = Close, 200 = Medium, 300 = Far
-            RANGE: 100,  // Reduced from 200
-            // ============================================
-            
-            PUKE_INTERVAL_FAST: 5000,  // Zombies 1, 2, 3 puke every 5 seconds
-            PUKE_INTERVAL_SLOW: 10000,  // Zombies 4-14 puke every 10 seconds
-            CLOSE_RANGE: 150,  // Or when within 150px of player
-            SPLASH_DURATION: 1500  // Splash stays on ground for 1.5 seconds
-        };
+        const bosses = [];
+        const bossClones = []; // Clones spawned by portal
+        const portal = null; // Will be created when stage starts
         const zombies = [];
         const ammoPacks = [];
         const bloodSplatters = [];
         const bulletTraces = [];
-        const buildings = [];
+        const fireEffects = []; // Fire visual effects
+        const iceEffects = []; // Ice visual effects
         const keys = new Set();
         const mouse = { x: 0, y: 0 };
 
@@ -942,145 +687,6 @@
         // Background music
         let backgroundMusic = null;
 
-        // ============================================
-        // CUTSCENE FUNCTIONS
-        // ============================================
-        
-        let currentCutsceneType = null; // Track if we're playing intro or stage
-        
-        function playCutscene(cutsceneType, stage) {
-            currentCutsceneType = cutsceneType; // Remember what type of cutscene this is
-            
-            // Determine which cutscene to play
-            let videoUrl = "";
-            let titleText = "";
-            let subtitleText = "";
-            
-            if (cutsceneType === "intro") {
-                videoUrl = SPRITES.introCutscene;
-                titleText = "ZOMBIE OUTBREAK";
-                subtitleText = "The infection has begun...";
-            } else if (cutsceneType === "stage" && stage >= 1 && stage <= 5) {
-                videoUrl = SPRITES[`stage${stage}Cutscene`];
-                titleText = `STAGE ${stage}`;
-                subtitleText = `${CONFIG.ZOMBIES_PER_STAGE[stage - 1]} zombies incoming...`;
-            }
-            
-            // Show cutscene screen
-            const cutsceneScreen = document.getElementById('cutscene-screen');
-            const cutsceneVideo = document.getElementById('cutscene-video');
-            const cutsceneSource = document.getElementById('cutscene-source');
-            const cutscenePlaceholder = document.getElementById('cutscene-placeholder');
-            const cutsceneTitle = document.getElementById('cutscene-title');
-            const cutsceneSubtitle = document.getElementById('cutscene-subtitle');
-            const skipBtn = document.getElementById('skip-cutscene-btn');
-            
-            // Show cutscene screen
-            cutsceneScreen.classList.remove('hidden');
-            
-            // If video URL exists, play video
-            if (videoUrl) {
-                cutsceneVideo.style.display = 'block';
-                cutscenePlaceholder.style.display = 'none';
-                
-                // Set video source
-                cutsceneSource.src = videoUrl;
-                cutsceneVideo.load();
-                
-                // Play video
-                const playPromise = cutsceneVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(err => {
-                        console.log('Video autoplay failed:', err);
-                        // Show placeholder if video fails
-                        showPlaceholder();
-                    });
-                }
-                
-                // Video ended - move to game
-                cutsceneVideo.onended = () => {
-                    afterCutscene(stage);
-                };
-            } else {
-                // No video URL - show placeholder screen
-                cutsceneVideo.style.display = 'none';
-                showPlaceholder();
-            }
-            
-            function showPlaceholder() {
-                cutsceneVideo.style.display = 'none';
-                cutscenePlaceholder.style.display = 'flex';
-                cutsceneTitle.textContent = titleText;
-                cutsceneSubtitle.textContent = subtitleText;
-                
-                // Auto-advance after 3 seconds
-                setTimeout(() => {
-                    if (!cutsceneScreen.classList.contains('hidden')) {
-                        afterCutscene(stage);
-                    }
-                }, 3000);
-            }
-            
-            // Skip button
-            skipBtn.onclick = () => {
-                if (cutsceneVideo.style.display !== 'none') {
-                    cutsceneVideo.pause();
-                    cutsceneVideo.currentTime = 0;
-                    cutsceneVideo.src = ''; // Fully stop video
-                }
-                afterCutscene(stage);
-            };
-            
-            // Auto-skip after 30 seconds as backup (for videos)
-            if (videoUrl) {
-                setTimeout(() => {
-                    if (!cutsceneScreen.classList.contains('hidden')) {
-                        cutsceneVideo.pause();
-                        cutsceneVideo.currentTime = 0;
-                        cutsceneVideo.src = '';
-                        afterCutscene(stage);
-                    }
-                }, 30000);
-            }
-        }
-        
-        function afterCutscene(stage) {
-            // Stop and reset video
-            const cutsceneVideo = document.getElementById('cutscene-video');
-            cutsceneVideo.pause();
-            cutsceneVideo.currentTime = 0;
-            cutsceneVideo.src = ''; // Clear source to fully stop
-            
-            // Hide cutscene screen
-            document.getElementById('cutscene-screen').classList.add('hidden');
-            
-            // If this was the intro cutscene, play stage 1 cutscene next
-            if (currentCutsceneType === 'intro') {
-                setTimeout(() => {
-                    playCutscene('stage', 1);
-                }, 200);
-            } else if (stage) {
-                // This was a stage cutscene, start the game
-                startStage(stage);
-            }
-        }
-        
-        function startStage(stage) {
-            // Hide all screens
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('stage-complete-screen').classList.add('hidden');
-            
-            // Set stage
-            gameState.stage = stage;
-            
-            // Start the stage
-            startStageDirectly();
-        }
-
-        // ============================================
-        // SAVE/LOAD FUNCTIONS
-        // ============================================
-        
         // Save/Load game functions
         function saveGame() {
             const saveData = {
@@ -1150,51 +756,30 @@
             }
         }
 
-        // Initialize buildings with fixed positions
-        function initBuildings() {
-            buildings.length = 0;
-            for (let i = 0; i < BUILDING_POSITIONS.length; i++) {
-                buildings.push({
-                    id: i + 1,
-                    x: BUILDING_POSITIONS[i].x,
-                    y: BUILDING_POSITIONS[i].y,
-                    width: CONFIG.BUILDING_WIDTH,
-                    height: CONFIG.BUILDING_HEIGHT
-                });
-            }
-        }
-
-        // Check collision with buildings
-        function checkBuildingCollision(x, y, size) {
-            for (const building of buildings) {
-                if (x + size > building.x && 
-                    x - size < building.x + building.width &&
-                    y + size > building.y && 
-                    y - size < building.y + building.height) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        // Get valid position avoiding buildings
+        // Get valid position (no building collision needed now)
         function getValidPosition(size) {
-            let attempts = 0;
-            while (attempts < 100) {
-                const x = Math.random() * (CONFIG.CANVAS_WIDTH - size * 2) + size;
-                const y = Math.random() * (CONFIG.CANVAS_HEIGHT - size * 2) + size;
-                if (!checkBuildingCollision(x, y, size)) {
-                    return {x, y};
-                }
-                attempts++;
-            }
-            return {x: CONFIG.CANVAS_WIDTH / 2, y: CONFIG.CANVAS_HEIGHT / 2};
+            const x = Math.random() * (CONFIG.CANVAS_WIDTH - size * 2) + size;
+            const y = Math.random() * (CONFIG.CANVAS_HEIGHT - size * 2) + size;
+            return {x, y};
         }
 
         function setupEvents() {
             window.addEventListener('keydown', (e) => {
                 if (gameState.gameRunning) {
                     const key = e.key.toLowerCase();
+                    
+                    // Weapon switching with 1, 2, 3 keys
+                    if (key === '1') {
+                        gameState.currentWeapon = 'shotgun';
+                        console.log('Switched to Shotgun');
+                    } else if (key === '2') {
+                        gameState.currentWeapon = 'fire';
+                        console.log('Switched to Fire Gun');
+                    } else if (key === '3') {
+                        gameState.currentWeapon = 'ice';
+                        console.log('Switched to Ice Gun');
+                    }
+                    
                     if (['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright',' '].includes(key)) {
                         e.preventDefault();
                         keys.add(key);
@@ -1223,6 +808,35 @@
                 else if (e.deltaY > 0 && gameState.zoom > CONFIG.MIN_ZOOM) gameState.zoom -= CONFIG.ZOOM_STEP;
             }, {passive: false});
             
+            // Pinch-to-zoom for mobile
+            let pinchStartDistance = 0;
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    pinchStartDistance = Math.sqrt(dx * dx + dy * dy);
+                }
+            });
+            
+            canvas.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const currentDistance = Math.sqrt(dx * dx + dy * dy);
+                    const delta = currentDistance - pinchStartDistance;
+                    
+                    if (Math.abs(delta) > 5) {
+                        if (delta > 0 && gameState.zoom < CONFIG.MAX_ZOOM) {
+                            gameState.zoom += CONFIG.ZOOM_STEP * 0.5;
+                        } else if (delta < 0 && gameState.zoom > CONFIG.MIN_ZOOM) {
+                            gameState.zoom -= CONFIG.ZOOM_STEP * 0.5;
+                        }
+                        pinchStartDistance = currentDistance;
+                    }
+                }
+            }, {passive: false});
+            
             document.getElementById('zoom-in').addEventListener('click', () => {
                 if (gameState.zoom < CONFIG.MAX_ZOOM) gameState.zoom += CONFIG.ZOOM_STEP;
             });
@@ -1231,28 +845,34 @@
                 if (gameState.zoom > CONFIG.MIN_ZOOM) gameState.zoom -= CONFIG.ZOOM_STEP;
             });
             
-            // Difficulty selection buttons
-            const difficultyButtons = {
-                easy: document.getElementById('easy-btn'),
-                medium: document.getElementById('medium-btn'),
-                hard: document.getElementById('hard-btn')
-            };
-            
-            Object.keys(difficultyButtons).forEach(difficulty => {
-                difficultyButtons[difficulty].addEventListener('click', () => {
-                    // Remove selected class from all buttons
-                    Object.values(difficultyButtons).forEach(btn => btn.classList.remove('selected'));
-                    // Add selected class to clicked button
-                    difficultyButtons[difficulty].classList.add('selected');
-                    // Apply difficulty settings
-                    applyDifficulty(difficulty);
-                });
+            // HUD dropdown toggle
+            document.getElementById('hud-header').addEventListener('click', () => {
+                const content = document.getElementById('hud-content');
+                const toggle = document.getElementById('hud-toggle');
+                content.classList.toggle('open');
+                toggle.classList.toggle('open');
             });
             
             document.getElementById('start-btn').addEventListener('click', () => {
-                clearSave();  // Clear save when starting new game
-                // Play intro cutscene first, then it will trigger stage 1 cutscene
-                playCutscene('intro', 1);
+                clearSave();
+                
+                // Play cutscene before stage 1
+                playCutscene(() => {
+                    // Spawn zombies and ammo for new game
+                    zombies.length = 0;
+                    bosses.length = 0;
+                    bossClones.length = 0;
+                    ammoPacks.length = 0;
+                    spawnInitialZombies();
+                    spawnHiddenAmmo();
+                    spawnBoss();
+                    createPortal(); // Create portal immediately
+                    updateHUD();
+                    
+                    document.getElementById('start-screen').classList.add('hidden');
+                    gameState.gameRunning = true;
+                    playStageMusic(gameState.stage);
+                });
             });
             
             document.getElementById('restart-btn').addEventListener('click', restartGame);
@@ -1262,19 +882,6 @@
             document.getElementById('resume-btn').addEventListener('click', togglePause);
             document.getElementById('quit-btn').addEventListener('click', quitToMenu);
             
-            // HUD toggle for mobile
-            document.getElementById('hud-toggle').addEventListener('click', () => {
-                const hud = document.getElementById('hud');
-                const toggle = document.getElementById('hud-toggle');
-                hud.classList.toggle('collapsed');
-                
-                if (hud.classList.contains('collapsed')) {
-                    toggle.textContent = '📊 STATS';
-                } else {
-                    toggle.textContent = '❌ CLOSE';
-                }
-            });
-            
             // ESC key to pause
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && gameState.gameRunning && !gameState.gameOver && !gameState.stageComplete) {
@@ -1282,88 +889,46 @@
                 }
             });
             
-            // Prevent page visibility from stopping the game
-            document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && gameState.gameRunning && !gameState.isPaused) {
-                    // Resume game loop if it stopped
-                    requestAnimationFrame(gameLoop);
-                }
-            });
-            
-            // Pinch-to-zoom for mobile
-            let lastTouchDistance = 0;
-            canvas.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 2) {
-                    const dx = e.touches[0].clientX - e.touches[1].clientX;
-                    const dy = e.touches[0].clientY - e.touches[1].clientY;
-                    lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
-                }
-            });
-            
-            canvas.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 2) {
-                    e.preventDefault();
-                    const dx = e.touches[0].clientX - e.touches[1].clientX;
-                    const dy = e.touches[0].clientY - e.touches[1].clientY;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (lastTouchDistance > 0) {
-                        const delta = distance - lastTouchDistance;
-                        if (Math.abs(delta) > 5) {
-                            if (delta > 0) {
-                                // Pinch out = zoom in
-                                gameState.zoom = Math.min(CONFIG.MAX_ZOOM, gameState.zoom + CONFIG.ZOOM_STEP);
-                            } else {
-                                // Pinch in = zoom out
-                                gameState.zoom = Math.max(CONFIG.MIN_ZOOM, gameState.zoom - CONFIG.ZOOM_STEP);
-                            }
-                        }
-                    }
-                    lastTouchDistance = distance;
-                }
-            });
-            
-            canvas.addEventListener('touchend', (e) => {
-                if (e.touches.length < 2) {
-                    lastTouchDistance = 0;
-                }
-            });
-            
             // Mobile joystick controls
             setupMobileControls();
         }
+
+        // Mobile joystick state
+        let mobileJoystick = {
+            active: false,
+            touchId: null,
+            deltaX: 0,
+            deltaY: 0
+        };
 
         function setupMobileControls() {
             const joystickArea = document.getElementById('joystick-area');
             const joystickStick = document.getElementById('joystick-stick');
             const shootButton = document.getElementById('shoot-button');
             
-            let joystickActive = false;
-            let joystickId = null;
-            let joystickCenterX = 0;
-            let joystickCenterY = 0;
-            let moveDirection = { x: 0, y: 0 };
+            let joystickStartX = 0;
+            let joystickStartY = 0;
             
             joystickArea.addEventListener('touchstart', (e) => {
                 if (!gameState.gameRunning || gameState.isPaused) return;
                 e.preventDefault();
-                joystickActive = true;
-                joystickId = e.changedTouches[0].identifier;
+                mobileJoystick.active = true;
+                mobileJoystick.touchId = e.changedTouches[0].identifier;
                 const rect = joystickArea.getBoundingClientRect();
-                joystickCenterX = rect.left + rect.width / 2;
-                joystickCenterY = rect.top + rect.height / 2;
+                joystickStartX = rect.left + rect.width / 2;
+                joystickStartY = rect.top + rect.height / 2;
             });
             
             joystickArea.addEventListener('touchmove', (e) => {
-                if (!joystickActive || !gameState.gameRunning || gameState.isPaused) return;
+                if (!mobileJoystick.active || !gameState.gameRunning || gameState.isPaused) return;
                 e.preventDefault();
                 
                 for (let touch of e.changedTouches) {
-                    if (touch.identifier === joystickId) {
-                        const deltaX = touch.clientX - joystickCenterX;
-                        const deltaY = touch.clientY - joystickCenterY;
+                    if (touch.identifier === mobileJoystick.touchId) {
+                        const deltaX = touch.clientX - joystickStartX;
+                        const deltaY = touch.clientY - joystickStartY;
                         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                        const maxDistance = 60;
+                        const maxDistance = 50;
                         
                         let moveX = deltaX;
                         let moveY = deltaY;
@@ -1375,16 +940,9 @@
                         
                         joystickStick.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
                         
-                        // Store movement direction for continuous movement
-                        if (distance > 5) {
-                            moveDirection.x = deltaX / distance;
-                            moveDirection.y = deltaY / distance;
-                            moveDirection.strength = Math.min(distance / maxDistance, 1);
-                        } else {
-                            moveDirection.x = 0;
-                            moveDirection.y = 0;
-                            moveDirection.strength = 0;
-                        }
+                        // Store joystick input for continuous movement
+                        mobileJoystick.deltaX = deltaX;
+                        mobileJoystick.deltaY = deltaY;
                         
                         break;
                     }
@@ -1393,48 +951,22 @@
             
             joystickArea.addEventListener('touchend', (e) => {
                 for (let touch of e.changedTouches) {
-                    if (touch.identifier === joystickId) {
-                        joystickActive = false;
-                        joystickId = null;
+                    if (touch.identifier === mobileJoystick.touchId) {
+                        mobileJoystick.active = false;
+                        mobileJoystick.touchId = null;
+                        mobileJoystick.deltaX = 0;
+                        mobileJoystick.deltaY = 0;
                         joystickStick.style.transform = 'translate(-50%, -50%)';
-                        moveDirection.x = 0;
-                        moveDirection.y = 0;
-                        moveDirection.strength = 0;
                         break;
                     }
                 }
             });
             
-            // Apply continuous movement in update loop
-            window.applyJoystickMovement = function() {
-                if (moveDirection.strength > 0 && gameState.gameRunning && !gameState.isPaused) {
-                    const newX = player.x + moveDirection.x * player.speed * moveDirection.strength;
-                    const newY = player.y + moveDirection.y * player.speed * moveDirection.strength;
-                    
-                    // Check building collision
-                    if (!checkBuildingCollision(newX, newY, player.size)) {
-                        player.x = newX;
-                        player.y = newY;
-                    } else {
-                        // Try sliding along walls
-                        if (!checkBuildingCollision(newX, player.y, player.size)) {
-                            player.x = newX;
-                        } else if (!checkBuildingCollision(player.x, newY, player.size)) {
-                            player.y = newY;
-                        }
-                    }
-                    
-                    // Keep player in bounds
-                    player.x = Math.max(player.size, Math.min(CONFIG.CANVAS_WIDTH - player.size, player.x));
-                    player.y = Math.max(player.size, Math.min(CONFIG.CANVAS_HEIGHT - player.size, player.y));
-                }
-            };
-            
             // Shoot button
             shootButton.addEventListener('touchstart', (e) => {
                 if (!gameState.gameRunning || gameState.isPaused) return;
                 e.preventDefault();
-                autoAimAndShoot();  // Use auto-aim on mobile
+                shoot();
             });
         }
 
@@ -1447,7 +979,7 @@
             if (gameState.isPaused) {
                 // Update pause screen info
                 document.getElementById('pause-stage').textContent = gameState.stage;
-                document.getElementById('pause-zombies').textContent = gameState.zombiesLeft;
+                document.getElementById('pause-zombies').textContent = gameState.zombiesRemaining;
                 document.getElementById('pause-lives').textContent = gameState.playerLives;
                 document.getElementById('pause-ammo').textContent = gameState.playerAmmo;
                 pauseScreen.classList.remove('hidden');
@@ -1475,32 +1007,112 @@
             saveGame();
         }
 
+        function playCutscene(callback) {
+            const cutsceneScreen = document.getElementById('cutscene-screen');
+            const cutsceneVideo = document.getElementById('cutscene-video');
+            const skipBtn = document.getElementById('skip-cutscene-btn');
+            
+            console.log("Starting cutscene...");
+            cutsceneScreen.classList.remove('hidden');
+            
+            // Reset video state
+            cutsceneVideo.currentTime = 0;
+            cutsceneVideo.muted = false; // Ensure sound is enabled
+            cutsceneVideo.volume = 1.0;
+            cutsceneVideo.load(); // Reload the video
+            
+            // Show skip button after 5 seconds
+            let skipTimeout = setTimeout(() => {
+                skipBtn.style.display = 'block';
+            }, 5000);
+            
+            // Remove any previous event listeners to prevent duplicates
+            cutsceneVideo.onended = null;
+            cutsceneVideo.onerror = null;
+            cutsceneVideo.ontimeupdate = null;
+            
+            // Skip button handler
+            const skipHandler = () => {
+                console.log("Cutscene skipped by user");
+                clearTimeout(skipTimeout);
+                skipBtn.style.display = 'none';
+                cutsceneVideo.pause();
+                cutsceneVideo.currentTime = 0;
+                cutsceneScreen.classList.add('hidden');
+                skipBtn.removeEventListener('click', skipHandler);
+                callback();
+            };
+            
+            skipBtn.addEventListener('click', skipHandler);
+            
+            // Set up error handler
+            cutsceneVideo.onerror = (err) => {
+                console.log("Video error, skipping cutscene", err);
+                clearTimeout(skipTimeout);
+                skipBtn.style.display = 'none';
+                cutsceneScreen.classList.add('hidden');
+                skipBtn.removeEventListener('click', skipHandler);
+                callback();
+            };
+            
+            // Set up completion handler
+            cutsceneVideo.onended = () => {
+                console.log("Video ended, continuing to game");
+                clearTimeout(skipTimeout);
+                skipBtn.style.display = 'none';
+                cutsceneScreen.classList.add('hidden');
+                skipBtn.removeEventListener('click', skipHandler);
+                // Small delay to ensure cleanup
+                setTimeout(() => {
+                    callback();
+                }, 100);
+            };
+            
+            // Watchdog timer - if video doesn't start playing in 3 seconds, skip it
+            const watchdogTimeout = setTimeout(() => {
+                if (cutsceneVideo.paused || cutsceneVideo.currentTime === 0) {
+                    console.log("Video failed to start, auto-skipping");
+                    clearTimeout(skipTimeout);
+                    skipBtn.style.display = 'none';
+                    cutsceneScreen.classList.add('hidden');
+                    skipBtn.removeEventListener('click', skipHandler);
+                    callback();
+                }
+            }, 3000);
+            
+            // Clear watchdog when video starts playing
+            cutsceneVideo.ontimeupdate = () => {
+                if (cutsceneVideo.currentTime > 0) {
+                    clearTimeout(watchdogTimeout);
+                    cutsceneVideo.ontimeupdate = null;
+                }
+            };
+            
+            // Attempt to play video
+            const playPromise = cutsceneVideo.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log("Video playing successfully");
+                }).catch(err => {
+                    console.log("Video autoplay prevented, skipping cutscene", err);
+                    clearTimeout(skipTimeout);
+                    clearTimeout(watchdogTimeout);
+                    skipBtn.style.display = 'none';
+                    cutsceneScreen.classList.add('hidden');
+                    skipBtn.removeEventListener('click', skipHandler);
+                    callback();
+                });
+            }
+        }
+
         async function initGame() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            await preloadAssets();
-            initBuildings();
-            spawnInitialZombies();
-            spawnHiddenAmmo();
-            spawnBoss();  // Spawn boss on every stage
             updateHUD();
             updateLivesDisplay();
             setupEvents();
-            
-            // Prevent mobile from sleeping/pausing
-            if ('wakeLock' in navigator) {
-                navigator.wakeLock.request('screen').catch(err => {
-                    console.log('Wake lock not supported:', err);
-                });
-            }
-            
-            // Keep screen active on mobile
-            let keepAliveInterval = setInterval(() => {
-                if (gameState.gameRunning && !gameState.isPaused) {
-                    // Dummy operation to keep JS active
-                    const dummy = Date.now();
-                }
-            }, 5000);
+            await preloadAssets();
             
             // Check for save data
             const saveData = loadGame();
@@ -1513,21 +1125,40 @@
                     gameState.playerLives = saveData.playerLives;
                     gameState.playerAmmo = saveData.playerAmmo;
                     gameState.totalAmmoCollected = saveData.totalAmmoCollected;
-                    gameState.zombiesLeft = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+                    gameState.zombiesRemaining = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+                    gameState.zombiesToSpawn = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
                     
                     // Reset for current stage
                     zombies.length = 0;
                     bosses.length = 0;
+                    bossClones.length = 0;
                     ammoPacks.length = 0;
-                    spawnInitialZombies();
-                    spawnHiddenAmmo();
-                    spawnBoss();
-                    updateHUD();
-                    updateLivesDisplay();
+                    activePortal = null;
                     
                     document.getElementById('start-screen').classList.add('hidden');
-                    gameState.gameRunning = true;
-                    playStageMusic(gameState.stage);
+                    
+                    // Play cutscene for stages 1, 2, and 3
+                    if (gameState.stage === 1 || gameState.stage === 2 || gameState.stage === 3) {
+                        playCutscene(() => {
+                            spawnInitialZombies();
+                            spawnHiddenAmmo();
+                            spawnBoss();
+                            createPortal(); // Create portal
+                            updateHUD();
+                            updateLivesDisplay();
+                            gameState.gameRunning = true;
+                            playStageMusic(gameState.stage);
+                        });
+                    } else {
+                        spawnInitialZombies();
+                        spawnHiddenAmmo();
+                        spawnBoss();
+                        createPortal(); // Create portal
+                        updateHUD();
+                        updateLivesDisplay();
+                        gameState.gameRunning = true;
+                        playStageMusic(gameState.stage);
+                    }
                 });
             }
             
@@ -1535,12 +1166,53 @@
         }
 
         function spawnInitialZombies() {
-            const n = Math.min(30, gameState.zombiesLeft);
-            for (let i = 0; i < n; i++) spawnZombie();
+            const n = Math.min(30, gameState.zombiesToSpawn);
+            for (let i = 0; i < n; i++) {
+                spawnZombieWithoutDecrement();
+            }
             
             // Always spawn zombie 8 and 9 on every stage
             spawnGhostZombie(8);
             spawnGhostZombie(9);
+        }
+        
+        function spawnZombieWithoutDecrement() {
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+            switch(side) {
+                case 0: x = -50; y = Math.random() * CONFIG.CANVAS_HEIGHT; break;
+                case 1: x = CONFIG.CANVAS_WIDTH + 50; y = Math.random() * CONFIG.CANVAS_HEIGHT; break;
+                case 2: x = Math.random() * CONFIG.CANVAS_WIDTH; y = -50; break;
+                case 3: x = Math.random() * CONFIG.CANVAS_WIDTH; y = CONFIG.CANVAS_HEIGHT + 50; break;
+            }
+            
+            // Determine zombie types based on stage
+            let maxZombieType;
+            switch(gameState.stage) {
+                case 1: maxZombieType = 3; break;
+                case 2: maxZombieType = 4; break;
+                case 3: maxZombieType = 6; break;
+                case 4: maxZombieType = 8; break;
+                case 5: maxZombieType = 9; break;
+                case 6: maxZombieType = 10; break;
+                case 7: maxZombieType = 11; break;
+                case 8: maxZombieType = 12; break;
+                case 9: maxZombieType = 13; break;
+                case 10: maxZombieType = 14; break;
+                default: maxZombieType = 3; break;
+            }
+            
+            const zombieType = Math.floor(Math.random() * maxZombieType) + 1;
+            
+            zombies.push({
+                x, y,
+                size: CONFIG.ZOMBIE_SIZE,
+                speed: CONFIG.ZOMBIE_SPEED_MIN + Math.random() * (CONFIG.ZOMBIE_SPEED_MAX - CONFIG.ZOMBIE_SPEED_MIN),
+                type: zombieType,
+                health: 50 + Math.floor(Math.random() * 50),
+                canPassThroughBuildings: (zombieType === 8 || zombieType === 9)
+            });
+            // Don't decrement zombiesLeft for initial spawns
         }
 
         function spawnGhostZombie(type) {
@@ -1565,7 +1237,7 @@
         }
 
         function spawnZombie() {
-            if (gameState.zombiesLeft <= 0) return;
+            if (gameState.zombiesToSpawn <= 0) return;
             const side = Math.floor(Math.random() * 4);
             let x, y;
             switch(side) {
@@ -1578,16 +1250,16 @@
             // Determine zombie types based on stage
             let maxZombieType;
             switch(gameState.stage) {
-                case 1: maxZombieType = 3; break;   // Zombies 1-3
-                case 2: maxZombieType = 4; break;   // Zombies 1-4
-                case 3: maxZombieType = 6; break;   // Zombies 1-6
-                case 4: maxZombieType = 8; break;   // Zombies 1-8
-                case 5: maxZombieType = 9; break;   // Zombies 1-9
-                case 6: maxZombieType = 10; break;  // All zombies 1-10
-                case 7: maxZombieType = 11; break;  // All zombies 1-11
-                case 8: maxZombieType = 12; break;  // All zombies 1-12
-                case 9: maxZombieType = 13; break;  // All zombies 1-13
-                case 10: maxZombieType = 14; break; // All zombies 1-14
+                case 1: maxZombieType = 3; break;
+                case 2: maxZombieType = 4; break;
+                case 3: maxZombieType = 6; break;
+                case 4: maxZombieType = 8; break;
+                case 5: maxZombieType = 9; break;
+                case 6: maxZombieType = 10; break;
+                case 7: maxZombieType = 11; break;
+                case 8: maxZombieType = 12; break;
+                case 9: maxZombieType = 13; break;
+                case 10: maxZombieType = 14; break;
                 default: maxZombieType = 3; break;
             }
             
@@ -1599,9 +1271,9 @@
                 speed: CONFIG.ZOMBIE_SPEED_MIN + Math.random() * (CONFIG.ZOMBIE_SPEED_MAX - CONFIG.ZOMBIE_SPEED_MIN),
                 type: zombieType,
                 health: 50 + Math.floor(Math.random() * 50),
-                canPassThroughBuildings: (zombieType === 8 || zombieType === 9)  // Zombies 8 & 9 are ghosts
+                canPassThroughBuildings: (zombieType === 8 || zombieType === 9)
             });
-            gameState.zombiesLeft--;
+            gameState.zombiesToSpawn--;
         }
 
         function spawnHiddenAmmo() {
@@ -1616,25 +1288,22 @@
         }
 
         function spawnBoss() {
-            bosses.length = 0;  // Clear any existing bosses
+            bosses.length = 0;
             
             // Boss health triples each stage
             const baseHealth = 2400;
-            const bossHealth = baseHealth * Math.pow(3, gameState.stage - 1);
+            const bossHealth = baseHealth * Math.pow(1, gameState.stage - 1);
             
             // Determine number of bosses
             let bossCount = 1;
-            let bossIds = [gameState.stage];  // Default: use stage number as boss ID
+            let bossIds = [gameState.stage];
             
-            if (gameState.stage >= 6 && gameState.stage <= 7) {
+            if (gameState.stage >= 6 && gameState.stage <= 9) {
                 bossCount = 2;
-                bossIds = [gameState.stage, gameState.stage];  // Two of the same boss
-            } else if (gameState.stage === 8 || gameState.stage === 9) {
-                bossCount = 3;  // 3 bosses on stages 8 and 9
-                bossIds = [gameState.stage, gameState.stage, gameState.stage];
+                bossIds = [gameState.stage, gameState.stage];
             } else if (gameState.stage === 10) {
                 bossCount = 3;
-                bossIds = [10, 11, 12];  // Three different bosses
+                bossIds = [10, 11, 12];
             }
             
             // Spawn bosses at different positions
@@ -1644,7 +1313,7 @@
                     x: CONFIG.CANVAS_WIDTH / 2 + xOffset,
                     y: 100 + (i * 50),
                     size: CONFIG.ZOMBIE_SIZE * 3,
-                    speed: CONFIG.BOSS_SPEED,
+                    speed: 1.2,
                     health: bossHealth,
                     maxHealth: bossHealth,
                     stage: gameState.stage,
@@ -1656,61 +1325,439 @@
             gameState.bossActive = true;
         }
 
-        function gameLoop() {
-            try {
-                if (gameState.gameRunning && !gameState.gameOver && !gameState.stageComplete && !gameState.isPaused) {
-                    update();
-                    draw();
-                    
-                    // Check stage completion - only count non-ghost zombies
-                    const nonGhostZombies = zombies.filter(z => !z.isGhost);
-                    const regularZombiesGone = gameState.zombiesLeft <= 0 && nonGhostZombies.length === 0;
-                    const bossDefeated = !gameState.bossActive || bosses.length === 0;
-                    
-                    if (regularZombiesGone && bossDefeated) {
-                        completeStage();
-                    }
-                    
-                    // Spawn regular zombies
-                    if (gameState.zombiesLeft > 0 && zombies.length < 50 && Math.random() < 0.05) {
-                        spawnZombie();
-                    }
-                    
-                    // Spawn ghost zombies periodically (10% chance when spawning)
-                    if (zombies.length < 50 && Math.random() < 0.01) {
-                        const ghostType = Math.random() < 0.5 ? 8 : 9;
-                        spawnGhostZombie(ghostType);
-                    }
-                } else if (gameState.isPaused) {
-                    // Still draw when paused
-                    draw();
+        // ============================================
+        // PORTAL CLONE SYSTEM
+        // ============================================
+
+        /**
+         * Portal Object Constructor
+         * Creates a boss-spawning portal with health, animations, and spawn timers
+         */
+        function createPortal() {
+            const pos = getValidPosition(CONFIG.PORTAL_SIZE);
+            
+            activePortal = {
+                x: pos.x,
+                y: pos.y,
+                size: CONFIG.PORTAL_SIZE,
+                health: CONFIG.PORTAL_HEALTH,
+                maxHealth: CONFIG.PORTAL_HEALTH,
+                lastSpawnTime: Date.now(),
+                nextSpawnTime: Date.now() + CONFIG.PORTAL_SPAWN_INTERVAL,
+                spawnInterval: CONFIG.PORTAL_SPAWN_INTERVAL,
+                warnTime: CONFIG.PORTAL_WARN_TIME,
+                isWarning: false,
+                pulsePhase: 0,
+                rotation: 0,
+                active: true
+            };
+            
+            gameState.portalActive = true;
+            gameState.portalDestroyed = false;
+            
+            console.log('[PORTAL] Portal created at', pos, 'Health:', CONFIG.PORTAL_HEALTH);
+        }
+
+        /**
+         * Update Portal State
+         * Handles spawn timing, visual effects, and clone generation
+         */
+        function updatePortal() {
+            if (!activePortal || !activePortal.active) return;
+            
+            const now = Date.now();
+            const timeUntilSpawn = activePortal.nextSpawnTime - now;
+            
+            // Update visual effects
+            activePortal.pulsePhase += 0.05;
+            activePortal.rotation += 0.02;
+            
+            // Check if entering warning phase
+            if (timeUntilSpawn <= activePortal.warnTime && !activePortal.isWarning) {
+                activePortal.isWarning = true;
+                console.log('[PORTAL] Warning: Spawn in 5 seconds');
+            }
+            
+            // Spawn boss clone when timer expires
+            if (timeUntilSpawn <= 0) {
+                spawnBossClone();
+                activePortal.lastSpawnTime = now;
+                activePortal.nextSpawnTime = now + activePortal.spawnInterval;
+                activePortal.isWarning = false;
+            }
+            
+            // Check if portal is destroyed
+            if (activePortal.health <= 0) {
+                destroyPortal();
+            }
+        }
+
+        /**
+         * Spawn Boss Clone from Portal
+         * Creates a copy of the stage boss(es) with all original properties
+         */
+        function spawnBossClone() {
+            // Check max clone limit
+            if (bossClones.length >= CONFIG.MAX_ACTIVE_CLONES) {
+                console.log('[PORTAL] Max clones reached, skipping spawn');
+                return;
+            }
+            
+            // Determine how many bosses to spawn based on stage
+            let cloneCount = 1;
+            let bossIds = [gameState.stage];
+            
+            if (gameState.stage >= 6 && gameState.stage <= 9) {
+                cloneCount = 2;
+                bossIds = [gameState.stage, gameState.stage];
+            } else if (gameState.stage === 10) {
+                cloneCount = 3;
+                bossIds = [10, 11, 12];
+            }
+            
+            // Spawn each clone
+            for (let i = 0; i < cloneCount; i++) {
+                const baseHealth = 2400;
+                const bossHealth = baseHealth * Math.pow(3, gameState.stage - 1);
+                
+                // Spawn near portal with offset
+                const angle = (Math.PI * 2 * i) / cloneCount;
+                const spawnDist = 100;
+                
+                const clone = {
+                    x: activePortal.x + Math.cos(angle) * spawnDist,
+                    y: activePortal.y + Math.sin(angle) * spawnDist,
+                    size: CONFIG.ZOMBIE_SIZE * 3,
+                    speed: 1.2,
+                    health: bossHealth * CONFIG.CLONE_DAMAGE_SCALE,
+                    maxHealth: bossHealth * CONFIG.CLONE_DAMAGE_SCALE,
+                    stage: gameState.stage,
+                    bossId: bossIds[i],
+                    soundPlayed: false,
+                    isClone: true,
+                    spawnTime: Date.now(),
+                    isInvulnerable: true // Spawn protection
+                };
+                
+                bossClones.push(clone);
+                
+                // Play spawn effects
+                playPortalSpawnSound();
+                createSpawnEffect(clone.x, clone.y);
+                
+                console.log('[PORTAL] Spawned clone', i + 1, 'of', cloneCount, 'Boss ID:', clone.bossId);
+            }
+        }
+
+        /**
+         * Update Boss Clones
+         * Same AI behavior as regular bosses
+         */
+        function updateBossClones() {
+            for (let i = bossClones.length - 1; i >= 0; i--) {
+                const clone = bossClones[i];
+                
+                // Remove spawn invulnerability after timer
+                if (clone.isInvulnerable && Date.now() - clone.spawnTime > CONFIG.CLONE_SPAWN_INVULN_TIME) {
+                    clone.isInvulnerable = false;
                 }
-            } catch (err) {
-                console.error('Game loop error:', err);
-                // Continue running even if error occurs
+                
+                // Move towards player (same as boss AI)
+                const dx = player.x - clone.x;
+                const dy = player.y - clone.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance > 0) {
+                    clone.x += (dx / distance) * clone.speed;
+                    clone.y += (dy / distance) * clone.speed;
+                }
+                
+                // Play sound when near player
+                if (distance < 200 && !clone.soundPlayed) {
+                    playBossSound();
+                    clone.soundPlayed = true;
+                }
+                
+                if (distance > 250) {
+                    clone.soundPlayed = false;
+                }
+                
+                // Check collision with player
+                if (!gameState.isInvincible && distance < player.size + clone.size) {
+                    takeDamage();
+                }
+                
+                // Check if clone is dead
+                if (clone.health <= 0) {
+                    bloodSplatters.push({x: clone.x, y: clone.y, size: 30 + Math.random() * 20, alpha: 1});
+                    ammoPacks.push({x: clone.x, y: clone.y, amount: 30});
+                    bossClones.splice(i, 1);
+                    console.log('[PORTAL] Clone destroyed, remaining:', bossClones.length);
+                }
+            }
+        }
+
+        /**
+         * Destroy Portal
+         * Called when portal health reaches zero
+         */
+        function destroyPortal() {
+            if (!activePortal) return;
+            
+            activePortal.active = false;
+            gameState.portalActive = false;
+            gameState.portalDestroyed = true;
+            
+            // Create destruction effect
+            for (let i = 0; i < 20; i++) {
+                bloodSplatters.push({
+                    x: activePortal.x + (Math.random() - 0.5) * 100,
+                    y: activePortal.y + (Math.random() - 0.5) * 100,
+                    size: 15 + Math.random() * 25,
+                    alpha: 1
+                });
+            }
+            
+            // Drop massive ammo reward
+            ammoPacks.push({x: activePortal.x, y: activePortal.y, amount: 50});
+            
+            console.log('[PORTAL] Portal destroyed!');
+        }
+
+        /**
+         * Draw Portal
+         * Animated pulsing portal with warning effects
+         */
+        function drawPortal() {
+            if (!activePortal || !activePortal.active) return;
+            
+            const now = Date.now();
+            const timeUntilSpawn = activePortal.nextSpawnTime - now;
+            const isWarning = timeUntilSpawn <= activePortal.warnTime;
+            
+            // Pulse effect
+            const pulse = Math.sin(activePortal.pulsePhase) * 0.2 + 1;
+            const size = activePortal.size * pulse;
+            
+            // Warning intensity
+            const warnIntensity = isWarning ? (1 - timeUntilSpawn / activePortal.warnTime) : 0;
+            
+            // Outer glow
+            ctx.save();
+            ctx.globalAlpha = 0.3 + warnIntensity * 0.4;
+            ctx.fillStyle = isWarning ? '#ff0000' : '#8800ff';
+            ctx.beginPath();
+            ctx.arc(activePortal.x, activePortal.y, size * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Middle ring
+            ctx.globalAlpha = 0.6 + warnIntensity * 0.3;
+            ctx.fillStyle = isWarning ? '#ff4400' : '#aa00ff';
+            ctx.beginPath();
+            ctx.arc(activePortal.x, activePortal.y, size * 1.2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Inner core
+            ctx.globalAlpha = 0.9;
+            ctx.fillStyle = isWarning ? '#ffaa00' : '#cc44ff';
+            ctx.beginPath();
+            ctx.arc(activePortal.x, activePortal.y, size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Rotating energy swirl
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.globalAlpha = 0.8;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.arc(activePortal.x, activePortal.y, size * 0.7, 
+                    activePortal.rotation + (i * Math.PI * 2 / 3), 
+                    activePortal.rotation + (i * Math.PI * 2 / 3) + Math.PI / 2);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+            
+            // Health bar
+            const portalHp = Math.max(0, activePortal.health / activePortal.maxHealth);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(activePortal.x - 80, activePortal.y - activePortal.size - 30, 160, 12);
+            ctx.fillStyle = '#f00';
+            ctx.fillRect(activePortal.x - 80, activePortal.y - activePortal.size - 30, 160, 12);
+            ctx.fillStyle = '#0f0';
+            ctx.fillRect(activePortal.x - 80, activePortal.y - activePortal.size - 30, 160 * portalHp, 12);
+            
+            // Portal label
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('PORTAL', activePortal.x, activePortal.y - activePortal.size - 40);
+            
+            // Warning timer
+            if (isWarning) {
+                ctx.fillStyle = '#ff0000';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText(`SPAWN: ${Math.ceil(timeUntilSpawn / 1000)}s`, activePortal.x, activePortal.y + activePortal.size + 30);
+            }
+        }
+
+        /**
+         * Draw Boss Clones
+         * Same rendering as regular bosses with "CLONE" label
+         */
+        function drawBossClones() {
+            for (const clone of bossClones) {
+                const bossImg = IMG['boss' + clone.bossId];
+                
+                // Flash effect during invulnerability
+                if (clone.isInvulnerable) {
+                    ctx.globalAlpha = 0.5 + Math.sin(Date.now() / 100) * 0.3;
+                } else {
+                    ctx.globalAlpha = 0.8;
+                }
+                
+                if (bossImg && bossImg.complete && bossImg.naturalWidth > 0 && SPRITES['boss' + clone.bossId]) {
+                    ctx.save();
+                    ctx.translate(clone.x, clone.y);
+                    ctx.drawImage(bossImg, -clone.size/2, -clone.size/2, clone.size, clone.size);
+                    ctx.restore();
+                } else {
+                    const colors = ['#8b0000', '#8b008b', '#ff4500', '#ff8c00', '#ff0000', '#dc143c', '#b22222', '#8b0000', '#a52a2a', '#800000', '#660000', '#4d0000'];
+                    ctx.fillStyle = colors[clone.bossId - 1] || '#8b0000';
+                    ctx.beginPath();
+                    ctx.arc(clone.x, clone.y, clone.size/2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.globalAlpha = 1;
+                
+                // Health bar
+                const cloneHp = Math.max(0, clone.health / clone.maxHealth);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(clone.x - 60, clone.y - clone.size/2 - 20, 120, 10);
+                ctx.fillStyle = '#f00';
+                ctx.fillRect(clone.x - 60, clone.y - clone.size/2 - 20, 120, 10);
+                ctx.fillStyle = '#0f0';
+                ctx.fillRect(clone.x - 60, clone.y - clone.size/2 - 20, 120 * cloneHp, 10);
+                
+                // Clone label
+                ctx.fillStyle = clone.isInvulnerable ? '#ffff00' : '#ff00ff';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('CLONE', clone.x, clone.y - clone.size/2 - 30);
+            }
+        }
+
+        /**
+         * Check bullet collision with portal
+         */
+        function checkPortalHit(bulletX, bulletY, bulletStartX, bulletStartY, damage) {
+            if (!activePortal || !activePortal.active) return false;
+            
+            if (checkLineCircleCollision(bulletStartX, bulletStartY, bulletX, bulletY, activePortal.x, activePortal.y, activePortal.size / 2)) {
+                activePortal.health -= damage;
+                createHitEffect(activePortal.x, activePortal.y);
+                console.log('[PORTAL] Hit! Health:', activePortal.health, '/', activePortal.maxHealth);
+                return true;
+            }
+            
+            return false;
+        }
+
+        /**
+         * Check bullet collision with boss clones
+         */
+        function checkCloneHits(bulletX, bulletY, bulletStartX, bulletStartY, damage) {
+            for (const clone of bossClones) {
+                if (clone.isInvulnerable) continue;
+                
+                if (checkLineCircleCollision(bulletStartX, bulletStartY, bulletX, bulletY, clone.x, clone.y, clone.size/2)) {
+                    clone.health -= damage;
+                    createHitEffect(clone.x, clone.y);
+                    applyWeaponEffect(clone);
+                }
+            }
+        }
+
+        /**
+         * Play portal spawn sound effect
+         */
+        function playPortalSpawnSound() {
+            try {
+                const ac = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ac.createOscillator(), gain = ac.createGain();
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, ac.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, ac.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.3);
+                osc.start(ac.currentTime);
+                osc.stop(ac.currentTime + 0.3);
+            } catch(e) {}
+        }
+
+        /**
+         * Create visual spawn effect
+         */
+        function createSpawnEffect(x, y) {
+            for (let i = 0; i < 10; i++) {
+                bloodSplatters.push({
+                    x: x + (Math.random() - 0.5) * 50,
+                    y: y + (Math.random() - 0.5) * 50,
+                    size: 5 + Math.random() * 10,
+                    alpha: 0.8
+                });
+            }
+        }
+
+        function gameLoop() {
+            if (gameState.gameRunning && !gameState.gameOver && !gameState.stageComplete && !gameState.isPaused) {
+                update();
+                draw();
+                
+                // Check stage completion - NOW INCLUDES PORTAL
+                const nonGhostZombies = zombies.filter(z => !z.isGhost);
+                const regularZombiesGone = gameState.zombiesRemaining <= 0 && nonGhostZombies.length === 0;
+                const bossDefeated = !gameState.bossActive || bosses.length === 0;
+                const portalDefeated = gameState.portalDestroyed || !gameState.portalActive;
+                const allClonesDefeated = bossClones.length === 0;
+                
+                // Stage only completes when EVERYTHING is cleared
+                if (regularZombiesGone && bossDefeated && portalDefeated && allClonesDefeated) {
+                    completeStage();
+                }
+                
+                // Spawn regular zombies
+                if (gameState.zombiesToSpawn > 0 && zombies.length < 50 && Math.random() < 0.05) {
+                    spawnZombie();
+                }
+                
+                // Spawn ghost zombies periodically
+                if (zombies.length < 50 && Math.random() < 0.01) {
+                    const ghostType = Math.random() < 0.5 ? 8 : 9;
+                    spawnGhostZombie(ghostType);
+                }
+            } else if (gameState.isPaused) {
+                draw();
             }
             requestAnimationFrame(gameLoop);
         }
 
         function update() {
-            try { updatePlayer(); } catch (e) { console.error('updatePlayer error:', e); }
-            try {
-                if (window.applyJoystickMovement) {
-                    window.applyJoystickMovement();
-                }
-            } catch (e) { console.error('applyJoystickMovement error:', e); }
-            try { updateZombies(); } catch (e) { console.error('updateZombies error:', e); }
-            try { updateBoss(); } catch (e) { console.error('updateBoss error:', e); }
-            try { updateCoconutBombs(); } catch (e) { console.error('updateCoconutBombs error:', e); }
-            try { updateAcidPukes(); } catch (e) { console.error('updateAcidPukes error:', e); }
-            try { updateAmmo(); } catch (e) { console.error('updateAmmo error:', e); }
-            try { updateBulletTraces(); } catch (e) { console.error('updateBulletTraces error:', e); }
-            try { updateHUD(); } catch (e) { console.error('updateHUD error:', e); }
-            try {
-                if (gameState.isInvincible && Date.now() - gameState.lastHitTime > CONFIG.INVINCIBILITY_TIME) {
-                    gameState.isInvincible = false;
-                }
-            } catch (e) { console.error('invincibility error:', e); }
+            updatePlayer();
+            updateZombies();
+            updateBoss();
+            updatePortal(); // Update portal spawn timer
+            updateBossClones(); // Update all clones
+            updateStatusEffects(); // Update burn/freeze effects
+            updateAmmo();
+            updateBulletTraces();
+            updateHUD();
+            if (gameState.isInvincible && Date.now() - gameState.lastHitTime > CONFIG.INVINCIBILITY_TIME) {
+                gameState.isInvincible = false;
+            }
         }
 
         function updateBoss() {
@@ -1725,26 +1772,16 @@
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance > 0) {
-                    // Boss can pass through buildings
                     boss.x += (dx / distance) * boss.speed;
                     boss.y += (dy / distance) * boss.speed;
                 }
                 
-                // Throw coconut bomb at player
-                const now = Date.now();
-                if (!boss.lastBombTime) boss.lastBombTime = now;
-                if (now - boss.lastBombTime > BOMB_CONFIG.THROW_INTERVAL) {
-                    throwCoconutBomb(boss, player.x, player.y);
-                    boss.lastBombTime = now;
-                }
-                
-                // Play boss sound when near player (200 pixels)
+                // Play boss sound when near player
                 if (distance < 200 && !boss.soundPlayed) {
                     playBossSound();
                     boss.soundPlayed = true;
                 }
                 
-                // Reset sound flag when boss moves away
                 if (distance > 250) {
                     boss.soundPlayed = false;
                 }
@@ -1757,20 +1794,11 @@
                 // Check if boss is dead
                 if (boss.health <= 0) {
                     bloodSplatters.push({x: boss.x, y: boss.y, size: 30 + Math.random() * 20, alpha: 1});
-                    // Boss drops lots of ammo
                     ammoPacks.push({x: boss.x, y: boss.y, amount: 30});
-                    
-                    // Award +1 life for killing boss (max 5 lives)
-                    if (gameState.playerLives < 5) {
-                        gameState.playerLives++;
-                        updateLivesDisplay();
-                    }
-                    
                     bosses.splice(i, 1);
                 }
             }
             
-            // If all bosses are dead, deactivate boss mode
             if (bosses.length === 0) {
                 gameState.bossActive = false;
             }
@@ -1791,206 +1819,34 @@
                 osc.stop(ac.currentTime + 0.5);
             } catch(e) {}
         }
-        
-        // ============================================
-        // COCONUT BOMB SYSTEM
-        // ============================================
-        
-        function throwCoconutBomb(boss, targetX, targetY) {
-            const dx = targetX - boss.x;
-            const dy = targetY - boss.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            coconutBombs.push({
-                x: boss.x,
-                y: boss.y,
-                vx: (dx / distance) * BOMB_CONFIG.SPEED,
-                vy: (dy / distance) * BOMB_CONFIG.SPEED,
-                thrownTime: Date.now(),
-                size: BOMB_CONFIG.SIZE
-            });
-        }
-        
-        function updateCoconutBombs() {
-            const now = Date.now();
-            
-            for (let i = coconutBombs.length - 1; i >= 0; i--) {
-                const bomb = coconutBombs[i];
-                
-                // Move bomb
-                bomb.x += bomb.vx;
-                bomb.y += bomb.vy;
-                
-                // Check if bomb should explode (after fuse time)
-                if (now - bomb.thrownTime > BOMB_CONFIG.FUSE_TIME) {
-                    explodeCoconutBomb(bomb);
-                    coconutBombs.splice(i, 1);
-                    continue;
-                }
-                
-                // Remove if off screen
-                if (bomb.x < -100 || bomb.x > CONFIG.CANVAS_WIDTH + 100 ||
-                    bomb.y < -100 || bomb.y > CONFIG.CANVAS_HEIGHT + 100) {
-                    coconutBombs.splice(i, 1);
-                }
-            }
-        }
-        
-        function explodeCoconutBomb(bomb) {
-            // Play explosion sound
-            playExplosionSound();
-            
-            // Create explosion visual effect
-            for (let i = 0; i < 20; i++) {
-                const angle = (Math.PI * 2 * i) / 20;
-                const distance = Math.random() * BOMB_CONFIG.EXPLOSION_RADIUS;
-                bloodSplatters.push({
-                    x: bomb.x + Math.cos(angle) * distance,
-                    y: bomb.y + Math.sin(angle) * distance,
-                    size: 10 + Math.random() * 15,
-                    alpha: 1,
-                    color: 'rgba(255, 150, 0, 0.8)'  // Orange explosion color
-                });
-            }
-            
-            // Check if player is in explosion radius
-            const dx = player.x - bomb.x;
-            const dy = player.y - bomb.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < BOMB_CONFIG.EXPLOSION_RADIUS && !gameState.isInvincible) {
-                takeDamage();
-            }
-        }
-        
-        function playExplosionSound() {
-            try {
-                const ac = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Low boom
-                const o1 = ac.createOscillator();
-                const g1 = ac.createGain();
-                o1.connect(g1);
-                g1.connect(ac.destination);
-                o1.frequency.value = 60;
-                g1.gain.value = 0.3;
-                o1.start(0);
-                g1.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + 0.4);
-                o1.stop(ac.currentTime + 0.4);
-                
-                // High crackle
-                const o2 = ac.createOscillator();
-                const g2 = ac.createGain();
-                o2.connect(g2);
-                g2.connect(ac.destination);
-                o2.type = 'sawtooth';
-                o2.frequency.value = 200;
-                g2.gain.value = 0.15;
-                o2.start(0);
-                g2.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + 0.2);
-                o2.stop(ac.currentTime + 0.2);
-            } catch(e) {}
-        }
-        
-        // ============================================
-        // ACID PUKE SYSTEM (Zombies 1, 2, 3)
-        // ============================================
-        
-        function pukeAcid(zombie, targetX, targetY) {
-            // Determine puke color based on zombie type
-            let pukeColor;
-            if (zombie.type >= 1 && zombie.type <= 3) {
-                pukeColor = { r: 0, g: 255, b: 0 };  // Green
-            } else if (zombie.type >= 4 && zombie.type <= 6) {
-                pukeColor = { r: 255, g: 0, b: 0 };  // Red
-            } else if (zombie.type >= 7 && zombie.type <= 9) {
-                pukeColor = { r: 0, g: 100, b: 255 };  // Blue
-            } else if (zombie.type >= 10 && zombie.type <= 14) {
-                pukeColor = { r: 255, g: 255, b: 0 };  // Yellow
-            } else {
-                pukeColor = { r: 0, g: 255, b: 0 };  // Default green
-            }
-            
-            // Play puke sound
-            playPukeSound();
-            
-            // Create acid splash on ground at target location
-            acidPukes.push({
-                x: targetX,
-                y: targetY,
-                radius: ACID_CONFIG.SPLASH_RADIUS,
-                createdTime: Date.now(),
-                alpha: 1,
-                color: pukeColor
-            });
-            
-            // Create visual splash particles
-            for (let i = 0; i < 15; i++) {
-                const angle = (Math.PI * 2 * i) / 15;
-                const distance = Math.random() * ACID_CONFIG.SPLASH_RADIUS;
-                bloodSplatters.push({
-                    x: targetX + Math.cos(angle) * distance,
-                    y: targetY + Math.sin(angle) * distance,
-                    size: 8 + Math.random() * 12,
-                    alpha: 1,
-                    color: `rgba(${pukeColor.r}, ${pukeColor.g}, ${pukeColor.b}, 0.7)`
-                });
-            }
-        }
-        
-        function updateAcidPukes() {
-            const now = Date.now();
-            
-            for (let i = acidPukes.length - 1; i >= 0; i--) {
-                const acid = acidPukes[i];
-                
-                // Check if player is in splash radius
-                const dx = player.x - acid.x;
-                const dy = player.y - acid.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < acid.radius && !gameState.isInvincible) {
-                    takeDamage();
-                }
-                
-                // Fade out over time
-                const age = now - acid.createdTime;
-                acid.alpha = 1 - (age / ACID_CONFIG.SPLASH_DURATION);
-                
-                // Remove after duration
-                if (age > ACID_CONFIG.SPLASH_DURATION) {
-                    acidPukes.splice(i, 1);
-                }
-            }
-        }
-        
-        function playPukeSound() {
-            try {
-                const ac = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Gurgling low sound
-                const o1 = ac.createOscillator();
-                const g1 = ac.createGain();
-                o1.connect(g1);
-                g1.connect(ac.destination);
-                o1.type = 'sawtooth';
-                o1.frequency.value = 120;
-                o1.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.3);
-                g1.gain.value = 0.2;
-                g1.gain.exponentialRampToValueAtTime(0.00001, ac.currentTime + 0.3);
-                o1.start(0);
-                o1.stop(ac.currentTime + 0.3);
-            } catch(e) {}
-        }
-
 
         function updatePlayer() {
             let dx = 0, dy = 0;
+            
+            // Desktop keyboard controls
             if (keys.has('w') || keys.has('arrowup')) dy -= 1;
             if (keys.has('s') || keys.has('arrowdown')) dy += 1;
             if (keys.has('a') || keys.has('arrowleft')) dx -= 1;
             if (keys.has('d') || keys.has('arrowright')) dx += 1;
-            if (dx && dy) { dx *= 0.707; dy *= 0.707; }
+            
+            // Mobile joystick controls
+            if (mobileJoystick.active) {
+                const distance = Math.sqrt(mobileJoystick.deltaX * mobileJoystick.deltaX + mobileJoystick.deltaY * mobileJoystick.deltaY);
+                const maxDistance = 50;
+                const strength = Math.min(distance / maxDistance, 1);
+                
+                if (distance > 5) { // Dead zone
+                    const angle = Math.atan2(mobileJoystick.deltaY, mobileJoystick.deltaX);
+                    dx = Math.cos(angle) * strength;
+                    dy = Math.sin(angle) * strength;
+                }
+            }
+            
+            // Normalize diagonal movement
+            if (dx && dy && !mobileJoystick.active) { 
+                dx *= 0.707; 
+                dy *= 0.707; 
+            }
             
             // Calculate new position
             let newX = player.x + dx * player.speed;
@@ -2000,73 +1856,56 @@
             newX = Math.max(player.size, Math.min(CONFIG.CANVAS_WIDTH - player.size, newX));
             newY = Math.max(player.size, Math.min(CONFIG.CANVAS_HEIGHT - player.size, newY));
             
-            // Check building collision
-            if (!checkBuildingCollision(newX, newY, player.size)) {
-                player.x = newX;
-                player.y = newY;
-            } else {
-                // Try sliding along walls
-                if (!checkBuildingCollision(newX, player.y, player.size)) {
-                    player.x = newX;
-                } else if (!checkBuildingCollision(player.x, newY, player.size)) {
-                    player.y = newY;
+            // No building collision, just update position
+            player.x = newX;
+            player.y = newY;
+            
+            // Auto-aim: find closest target (zombie or boss)
+            let closestTarget = null;
+            let closestDistance = Infinity;
+            
+            // Check zombies
+            for (const z of zombies) {
+                const dx = z.x - player.x;
+                const dy = z.y - player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < closestDistance) {
+                    closestDistance = dist;
+                    closestTarget = {x: z.x, y: z.y};
                 }
             }
             
-            const wmx = (mouse.x / gameState.zoom) + player.x - (canvas.width / 2 / gameState.zoom);
-            const wmy = (mouse.y / gameState.zoom) + player.y - (canvas.height / 2 / gameState.zoom);
-            player.angle = Math.atan2(wmy - player.y, wmx - player.x);
+            // Check bosses
+            for (const boss of bosses) {
+                const dx = boss.x - player.x;
+                const dy = boss.y - player.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < closestDistance) {
+                    closestDistance = dist;
+                    closestTarget = {x: boss.x, y: boss.y};
+                }
+            }
+            
+            // Aim at closest target, otherwise use mouse
+            if (closestTarget) {
+                player.angle = Math.atan2(closestTarget.y - player.y, closestTarget.x - player.x);
+            } else {
+                const wmx = (mouse.x / gameState.zoom) + player.x - (canvas.width / 2 / gameState.zoom);
+                const wmy = (mouse.y / gameState.zoom) + player.y - (canvas.height / 2 / gameState.zoom);
+                player.angle = Math.atan2(wmy - player.y, wmx - player.x);
+            }
         }
 
         function updateZombies() {
-            const now = Date.now();
-            
             for (let i = zombies.length - 1; i >= 0; i--) {
                 const z = zombies[i];
                 const dx = player.x - z.x, dy = player.y - z.y;
                 const d = Math.sqrt(dx*dx + dy*dy);
                 
-                // All zombies (except ghosts) can puke acid
-                if (!z.isGhost) {
-                    if (!z.lastPukeTime) z.lastPukeTime = now;
-                    
-                    // Zombies 1-3 puke every 5 seconds, others every 10 seconds
-                    const pukeInterval = (z.type === 1 || z.type === 2 || z.type === 3) 
-                        ? ACID_CONFIG.PUKE_INTERVAL_FAST 
-                        : ACID_CONFIG.PUKE_INTERVAL_SLOW;
-                    
-                    // Puke at interval OR when close to player
-                    const shouldPuke = (now - z.lastPukeTime > pukeInterval) || 
-                                      (d < ACID_CONFIG.CLOSE_RANGE && now - z.lastPukeTime > 2000);
-                    
-                    if (shouldPuke && d < ACID_CONFIG.RANGE) {
-                        pukeAcid(z, player.x, player.y);
-                        z.lastPukeTime = now;
-                    }
-                }
-                
                 if (d > 0) {
-                    const newX = z.x + (dx/d) * z.speed;
-                    const newY = z.y + (dy/d) * z.speed;
-                    
-                    // Zombies 8 and 9 can pass through buildings
-                    if (z.canPassThroughBuildings) {
-                        z.x = newX;
-                        z.y = newY;
-                    } else {
-                        // Check building collision for normal zombies
-                        if (!checkBuildingCollision(newX, newY, z.size)) {
-                            z.x = newX;
-                            z.y = newY;
-                        } else {
-                            // Try to slide around buildings
-                            if (!checkBuildingCollision(newX, z.y, z.size)) {
-                                z.x = newX;
-                            } else if (!checkBuildingCollision(z.x, newY, z.size)) {
-                                z.y = newY;
-                            }
-                        }
-                    }
+                    // All zombies move freely now (no building collision)
+                    z.x += (dx/d) * z.speed;
+                    z.y += (dy/d) * z.speed;
                 }
                 
                 if (!gameState.isInvincible && d < player.size + z.size) takeDamage();
@@ -2076,9 +1915,9 @@
                     }
                     bloodSplatters.push({x: z.x, y: z.y, size: 10 + Math.random() * 15, alpha: 1});
                     zombies.splice(i, 1);
-                    // Ghost zombies don't count toward stage zombies
                     if (!z.isGhost) {
                         gameState.zombiesKilled++;
+                        gameState.zombiesRemaining--;
                     }
                 }
             }
@@ -2129,7 +1968,7 @@
             ctx.scale(gameState.zoom, gameState.zoom);
             ctx.translate(-vx, -vy);
             
-            // Background - use stage-specific tile
+            // Background
             const tileKey = 'groundTile' + gameState.stage;
             if (IMG[tileKey] && IMG[tileKey].complete && IMG[tileKey].naturalWidth > 0 && SPRITES[tileKey]) {
                 const pattern = ctx.createPattern(IMG[tileKey], 'repeat');
@@ -2138,21 +1977,6 @@
                 ctx.fillStyle = '#1a3a1a';
             }
             ctx.fillRect(0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
-            
-            // Draw buildings
-            for (let i = 0; i < buildings.length; i++) {
-                const b = buildings[i];
-                const buildingImg = IMG['building' + b.id];
-                if (buildingImg && buildingImg.complete && buildingImg.naturalWidth > 0 && SPRITES['building' + b.id]) {
-                    ctx.drawImage(buildingImg, b.x, b.y, b.width, b.height);
-                } else {
-                    ctx.fillStyle = '#555577';
-                    ctx.fillRect(b.x, b.y, b.width, b.height);
-                    ctx.strokeStyle = '#333';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(b.x, b.y, b.width, b.height);
-                }
-            }
             
             // Ammo
             for (const a of ammoPacks) {
@@ -2172,7 +1996,7 @@
             
             // Bullets
             for (const t of bulletTraces) {
-                ctx.strokeStyle = `rgba(255,255,0,${t.life})`;
+                ctx.strokeStyle = t.color ? t.color.replace('1)', `${t.life})`) : `rgba(255,255,0,${t.life})`;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(t.start.x, t.start.y);
@@ -2183,8 +2007,7 @@
             // Blood
             for (let i = bloodSplatters.length - 1; i >= 0; i--) {
                 const s = bloodSplatters[i];
-                const color = s.color || `rgba(139,0,0,${s.alpha})`;
-                ctx.fillStyle = color.includes('rgba') ? color.replace(/[\d.]+\)$/, `${s.alpha})`) : `rgba(139,0,0,${s.alpha})`;
+                ctx.fillStyle = `rgba(139,0,0,${s.alpha})`;
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -2192,13 +2015,43 @@
                 if (s.alpha <= 0) bloodSplatters.splice(i, 1);
             }
             
+            // Fire effects
+            for (const f of fireEffects) {
+                ctx.fillStyle = `rgba(255,100,0,${f.alpha})`;
+                ctx.beginPath();
+                ctx.arc(f.x + (Math.random() - 0.5) * 5, f.y - f.life * 0.5, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Ice effects
+            for (const ice of iceEffects) {
+                ctx.fillStyle = `rgba(100,200,255,${ice.alpha})`;
+                ctx.beginPath();
+                ctx.arc(ice.x + (Math.random() - 0.5) * 3, ice.y + (Math.random() - 0.5) * 3, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw Portal (behind everything)
+            drawPortal();
+            
             // Zombies
             for (const z of zombies) {
                 const zi = IMG['zombie' + z.type];
                 
-                // Make ghost zombies (8 & 9) semi-transparent
                 if (z.canPassThroughBuildings) {
                     ctx.globalAlpha = 0.7;
+                }
+                
+                // Draw burn/freeze overlay
+                if (z.burning || z.frozen) {
+                    ctx.save();
+                    if (z.burning) {
+                        ctx.shadowColor = 'rgba(255,100,0,0.8)';
+                        ctx.shadowBlur = 15;
+                    } else if (z.frozen) {
+                        ctx.shadowColor = 'rgba(100,200,255,0.8)';
+                        ctx.shadowBlur = 15;
+                    }
                 }
                 
                 if (zi && zi.complete && zi.naturalWidth > 0 && SPRITES['zombie' + z.type]) {
@@ -2214,7 +2067,10 @@
                     ctx.fill();
                 }
                 
-                // Reset alpha
+                if (z.burning || z.frozen) {
+                    ctx.restore();
+                }
+                
                 ctx.globalAlpha = 1;
                 
                 const hp = Math.max(0, z.health / 100);
@@ -2229,7 +2085,6 @@
                 for (const boss of bosses) {
                     const bossImg = IMG['boss' + boss.bossId];
                     
-                    // Make boss semi-transparent (ghost effect)
                     ctx.globalAlpha = 0.8;
                     
                     if (bossImg && bossImg.complete && bossImg.naturalWidth > 0 && SPRITES['boss' + boss.bossId]) {
@@ -2238,7 +2093,6 @@
                         ctx.drawImage(bossImg, -boss.size/2, -boss.size/2, boss.size, boss.size);
                         ctx.restore();
                     } else {
-                        // Fallback color changes per boss
                         const colors = ['#8b0000', '#8b008b', '#ff4500', '#ff8c00', '#ff0000', '#dc143c', '#b22222', '#8b0000', '#a52a2a', '#800000', '#660000', '#4d0000'];
                         ctx.fillStyle = colors[boss.bossId - 1] || '#8b0000';
                         ctx.beginPath();
@@ -2246,71 +2100,25 @@
                         ctx.fill();
                     }
                     
-                    // Reset alpha
                     ctx.globalAlpha = 1;
                     
-                    // Boss health bar (bigger)
+                    // Boss health bar
                     const bossHp = Math.max(0, boss.health / boss.maxHealth);
                     ctx.fillStyle = '#000';
                     ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120, 10);
-                    ctx.fillStyle = '#ff0000';
+                    ctx.fillStyle = '#f00';
+                    ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120, 10);
+                    ctx.fillStyle = '#0f0';
                     ctx.fillRect(boss.x - 60, boss.y - boss.size/2 - 20, 120 * bossHp, 10);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('BOSS', boss.x, boss.y - boss.size/2 - 30);
                 }
             }
             
-            // Draw coconut bombs
-            for (const bomb of coconutBombs) {
-                const bombImg = IMG.coconutBomb;
-                
-                if (bombImg && bombImg.complete && bombImg.naturalWidth > 0) {
-                    ctx.save();
-                    ctx.translate(bomb.x, bomb.y);
-                    // Rotate bomb as it flies
-                    const rotation = (Date.now() - bomb.thrownTime) / 100;
-                    ctx.rotate(rotation);
-                    ctx.drawImage(bombImg, -bomb.size/2, -bomb.size/2, bomb.size, bomb.size);
-                    ctx.restore();
-                } else {
-                    // Fallback: brown circle
-                    ctx.fillStyle = '#654321';
-                    ctx.beginPath();
-                    ctx.arc(bomb.x, bomb.y, bomb.size/2, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Fuse spark
-                    ctx.fillStyle = '#ff4500';
-                    ctx.beginPath();
-                    ctx.arc(bomb.x, bomb.y - bomb.size/2, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-            
-            // Draw acid splashes (ground pools)
-            for (const acid of acidPukes) {
-                const c = acid.color || { r: 0, g: 255, b: 0 };  // Default green
-                
-                // Draw fading splash circle on ground
-                ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${acid.alpha * 0.4})`;
-                ctx.beginPath();
-                ctx.arc(acid.x, acid.y, acid.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Inner brighter circle
-                const brightR = Math.min(255, c.r + 50);
-                const brightG = Math.min(255, c.g + 50);
-                const brightB = Math.min(255, c.b + 50);
-                ctx.fillStyle = `rgba(${brightR}, ${brightG}, ${brightB}, ${acid.alpha * 0.6})`;
-                ctx.beginPath();
-                ctx.arc(acid.x, acid.y, acid.radius * 0.6, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Glowing edge
-                ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${acid.alpha * 0.8})`;
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(acid.x, acid.y, acid.radius, 0, Math.PI * 2);
-                ctx.stroke();
-            }
+            // Draw Boss Clones
+            drawBossClones();
             
             // Player
             ctx.save();
@@ -2327,18 +2135,15 @@
                 ctx.arc(0, 0, player.size/2, 0, Math.PI * 2);
                 ctx.fill();
             }
-            // Only show gun on desktop (not mobile)
-            if (window.innerWidth > 768) {
-                ctx.fillStyle = '#8b4513';
-                ctx.fillRect(player.size/3, -3, 25, 6);
-                ctx.fillStyle = '#654321';
-                ctx.fillRect(player.size/3 + 25, -2, 10, 4);
-            }
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(player.size/3, -3, 25, 6);
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(player.size/3 + 25, -2, 10, 4);
             ctx.restore();
             
             ctx.restore();
             
-            // Boss HP bars on HUD (top center) - show all bosses
+            // Boss HP bars on HUD
             if (gameState.bossActive && bosses.length > 0) {
                 const barWidth = 300;
                 const barHeight = 20;
@@ -2381,163 +2186,273 @@
             ctx.lineTo(mouse.x, mouse.y + 15);
             ctx.stroke();
             
-            // Mobile auto-aim indicator
-            if (window.innerWidth <= 768) {
-                try {
-                    const target = findNearestZombie();
-                    if (target && typeof target.x === 'number' && typeof target.y === 'number') {
-                        const screenX = (target.x - camX) * gameState.zoom + canvas.width / 2;
-                        const screenY = (target.y - camY) * gameState.zoom + canvas.height / 2;
-                        
-                        ctx.strokeStyle = '#ff0000';
-                        ctx.lineWidth = 3;
-                        ctx.beginPath();
-                        ctx.arc(screenX, screenY, 40, 0, Math.PI * 2);
-                        ctx.stroke();
-                        
-                        // Crosshair on target
-                        ctx.strokeStyle = '#ff0000';
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(screenX - 15, screenY);
-                        ctx.lineTo(screenX + 15, screenY);
-                        ctx.moveTo(screenX, screenY - 15);
-                        ctx.lineTo(screenX, screenY + 15);
-                        ctx.stroke();
-                    }
-                } catch (err) {
-                    // Silently fail if target indicator has issues
-                }
-            }
+            // Weapon indicator (bottom center)
+            const weaponNames = {shotgun: 'SHOTGUN', fire: 'FIRE GUN', ice: 'ICE GUN'};
+            const weaponColors = {shotgun: '#ffd166', fire: '#ff6600', ice: '#66ccff'};
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(canvas.width / 2 - 80, canvas.height - 50, 160, 40);
+            ctx.fillStyle = weaponColors[gameState.currentWeapon];
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(weaponNames[gameState.currentWeapon], canvas.width / 2, canvas.height - 22);
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Arial';
+            ctx.fillText('1  2  3', canvas.width / 2, canvas.height - 8);
         }
 
         function shoot() {
             if (gameState.playerAmmo <= 0) return;
             const now = Date.now();
-            if (now - gameState.lastShotTime < CONFIG.SHOTGUN_FIRE_RATE) return;
+            
+            // Get weapon config based on current weapon
+            let fireRate, range, spread, pellets, damage;
+            switch(gameState.currentWeapon) {
+                case 'shotgun':
+                    fireRate = CONFIG.SHOTGUN_FIRE_RATE;
+                    range = CONFIG.SHOTGUN_RANGE;
+                    spread = CONFIG.SHOTGUN_SPREAD;
+                    pellets = CONFIG.SHOTGUN_PELLETS;
+                    damage = CONFIG.SHOTGUN_DAMAGE;
+                    break;
+                case 'fire':
+                    fireRate = CONFIG.FIRE_GUN_FIRE_RATE;
+                    range = CONFIG.FIRE_GUN_RANGE;
+                    spread = CONFIG.FIRE_GUN_SPREAD;
+                    pellets = 1;
+                    damage = CONFIG.FIRE_GUN_DAMAGE;
+                    break;
+                case 'ice':
+                    fireRate = CONFIG.ICE_GUN_FIRE_RATE;
+                    range = CONFIG.ICE_GUN_RANGE;
+                    spread = CONFIG.ICE_GUN_SPREAD;
+                    pellets = 1;
+                    damage = CONFIG.ICE_GUN_DAMAGE;
+                    break;
+            }
+            
+            if (now - gameState.lastShotTime < fireRate) return;
             
             gameState.playerAmmo--;
             gameState.lastShotTime = now;
-            playShotgunSound();
+            playWeaponSound(gameState.currentWeapon);
             
-            for (let i = 0; i < CONFIG.SHOTGUN_PELLETS; i++) {
-                const spread = (Math.random() - 0.5) * CONFIG.SHOTGUN_SPREAD;
-                const angle = player.angle + spread;
-                const ex = player.x + Math.cos(angle) * CONFIG.SHOTGUN_RANGE;
-                const ey = player.y + Math.sin(angle) * CONFIG.SHOTGUN_RANGE;
-                bulletTraces.push({start: {x: player.x, y: player.y}, end: {x: ex, y: ey}, life: 1});
+            for (let i = 0; i < pellets; i++) {
+                const spreadAngle = (Math.random() - 0.5) * spread;
+                const angle = player.angle + spreadAngle;
+                const ex = player.x + Math.cos(angle) * range;
+                const ey = player.y + Math.sin(angle) * range;
+                
+                // Create weapon-specific bullet trace
+                const traceColor = gameState.currentWeapon === 'fire' ? 'rgba(255,100,0,1)' : 
+                                   gameState.currentWeapon === 'ice' ? 'rgba(100,200,255,1)' : 
+                                   'rgba(255,255,0,1)';
+                bulletTraces.push({
+                    start: {x: player.x, y: player.y}, 
+                    end: {x: ex, y: ey}, 
+                    life: 1,
+                    color: traceColor
+                });
+                
+                // Check portal hit
+                checkPortalHit(ex, ey, player.x, player.y, damage);
+                
+                // Check clone hits
+                checkCloneHits(ex, ey, player.x, player.y, damage);
                 
                 // Check all bosses
                 if (gameState.bossActive) {
                     for (const boss of bosses) {
-                        const ldx = ex - player.x, ldy = ey - player.y;
-                        const ll = Math.sqrt(ldx*ldx + ldy*ldy);
-                        const lux = ldx/ll, luy = ldy/ll;
-                        const tcx = boss.x - player.x, tcy = boss.y - player.y;
-                        const proj = tcx*lux + tcy*luy;
-                        const clamp = Math.max(0, Math.min(ll, proj));
-                        const cpx = player.x + clamp*lux, cpy = player.y + clamp*luy;
-                        const dx = boss.x - cpx, dy = boss.y - cpy;
-                        const dist = Math.sqrt(dx*dx + dy*dy);
-                        if (dist <= boss.size/2) {
-                            boss.health -= CONFIG.SHOTGUN_DAMAGE;
-                            bloodSplatters.push({x: cpx, y: cpy, size: 8 + Math.random() * 12, alpha: 1});
+                        if (checkLineCircleCollision(player.x, player.y, ex, ey, boss.x, boss.y, boss.size/2)) {
+                            boss.health -= damage;
+                            createHitEffect(boss.x, boss.y);
+                            applyWeaponEffect(boss);
                         }
                     }
                 }
                 
                 // Check zombie hits
                 for (const z of zombies) {
-                    const ldx = ex - player.x, ldy = ey - player.y;
-                    const ll = Math.sqrt(ldx*ldx + ldy*ldy);
-                    const lux = ldx/ll, luy = ldy/ll;
-                    const tcx = z.x - player.x, tcy = z.y - player.y;
-                    const proj = tcx*lux + tcy*luy;
-                    const clamp = Math.max(0, Math.min(ll, proj));
-                    const cpx = player.x + clamp*lux, cpy = player.y + clamp*luy;
-                    const dx = z.x - cpx, dy = z.y - cpy;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist <= z.size/2) {
-                        z.health -= CONFIG.SHOTGUN_DAMAGE;
-                        bloodSplatters.push({x: cpx, y: cpy, size: 5 + Math.random() * 10, alpha: 1});
+                    if (checkLineCircleCollision(player.x, player.y, ex, ey, z.x, z.y, z.size/2)) {
+                        z.health -= damage;
+                        createHitEffect(z.x, z.y);
+                        applyWeaponEffect(z);
                     }
                 }
             }
             updateHUD();
         }
 
-        function findNearestZombie() {
-            if (!zombies || !Array.isArray(zombies)) return null;
+        function checkLineCircleCollision(x1, y1, x2, y2, cx, cy, radius) {
+            const ldx = x2 - x1;
+            const ldy = y2 - y1;
+            const ll = Math.sqrt(ldx*ldx + ldy*ldy);
+            if (ll === 0) return false;
             
-            let nearest = null;
-            let minDist = Infinity;
+            const lux = ldx/ll, luy = ldy/ll;
+            const tcx = cx - x1, tcy = cy - y1;
+            const proj = tcx*lux + tcy*luy;
+            const clamp = Math.max(0, Math.min(ll, proj));
+            const cpx = x1 + clamp*lux, cpy = y1 + clamp*luy;
+            const dx = cx - cpx, dy = cy - cpy;
+            const dist = Math.sqrt(dx*dx + dy*dy);
             
-            // Check all zombies
-            for (const z of zombies) {
-                if (!z || typeof z.x !== 'number' || typeof z.y !== 'number') continue;
-                
-                const dx = z.x - player.x;
-                const dy = z.y - player.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                
-                if (dist < minDist && dist < CONFIG.SHOTGUN_RANGE * 2) {
-                    minDist = dist;
-                    nearest = z;
+            return dist <= radius;
+        }
+
+        function applyWeaponEffect(target) {
+            if (gameState.currentWeapon === 'fire') {
+                // Apply burn effect
+                if (!target.burning) {
+                    target.burning = true;
+                    target.burnStartTime = Date.now();
+                    target.burnEndTime = Date.now() + CONFIG.FIRE_GUN_BURN_DURATION;
+                    target.lastBurnTick = Date.now();
                 }
+            } else if (gameState.currentWeapon === 'ice') {
+                // Apply slow effect
+                if (!target.originalSpeed) {
+                    target.originalSpeed = target.speed;
+                }
+                target.frozen = true;
+                target.frozenEndTime = Date.now() + CONFIG.ICE_GUN_SLOW_DURATION;
+                target.speed = target.originalSpeed * CONFIG.ICE_GUN_SLOW_FACTOR;
             }
+        }
+
+        function updateStatusEffects() {
+            const now = Date.now();
             
-            // Check all bosses
-            if (gameState.bossActive && bosses && Array.isArray(bosses)) {
-                for (const boss of bosses) {
-                    if (!boss || typeof boss.x !== 'number' || typeof boss.y !== 'number') continue;
-                    
-                    const dx = boss.x - player.x;
-                    const dy = boss.y - player.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (dist < minDist && dist < CONFIG.SHOTGUN_RANGE * 2) {
-                        minDist = dist;
-                        nearest = boss;
+            // Update zombie status effects
+            for (const z of zombies) {
+                // Burn damage over time
+                if (z.burning) {
+                    if (now > z.burnEndTime) {
+                        z.burning = false;
+                    } else {
+                        // Apply burn damage every 500ms
+                        if (now - z.lastBurnTick > 500) {
+                            z.health -= CONFIG.FIRE_GUN_BURN_DAMAGE;
+                            z.lastBurnTick = now;
+                            fireEffects.push({x: z.x, y: z.y, alpha: 1, life: 20});
+                        }
+                    }
+                }
+                
+                // Remove freeze effect
+                if (z.frozen && now > z.frozenEndTime) {
+                    z.frozen = false;
+                    if (z.originalSpeed) {
+                        z.speed = z.originalSpeed;
                     }
                 }
             }
             
-            return nearest;
-        }
-
-        function autoAimAndShoot() {
-            try {
-                const target = findNearestZombie();
-                if (target && typeof target.x === 'number' && typeof target.y === 'number') {
-                    const dx = target.x - player.x;
-                    const dy = target.y - player.y;
-                    player.angle = Math.atan2(dy, dx);
+            // Update boss status effects
+            for (const boss of bosses) {
+                if (boss.burning) {
+                    if (now > boss.burnEndTime) {
+                        boss.burning = false;
+                    } else {
+                        if (now - boss.lastBurnTick > 500) {
+                            boss.health -= CONFIG.FIRE_GUN_BURN_DAMAGE;
+                            boss.lastBurnTick = now;
+                            fireEffects.push({x: boss.x, y: boss.y, alpha: 1, life: 20});
+                        }
+                    }
                 }
-                shoot();
-            } catch (err) {
-                console.error('Auto-aim error:', err);
-                shoot(); // Shoot anyway even if auto-aim fails
+                
+                if (boss.frozen && now > boss.frozenEndTime) {
+                    boss.frozen = false;
+                    if (boss.originalSpeed) {
+                        boss.speed = boss.originalSpeed;
+                    }
+                }
+            }
+            
+            // Update clone status effects
+            for (const clone of bossClones) {
+                if (clone.burning) {
+                    if (now > clone.burnEndTime) {
+                        clone.burning = false;
+                    } else {
+                        if (now - clone.lastBurnTick > 500) {
+                            clone.health -= CONFIG.FIRE_GUN_BURN_DAMAGE;
+                            clone.lastBurnTick = now;
+                            fireEffects.push({x: clone.x, y: clone.y, alpha: 1, life: 20});
+                        }
+                    }
+                }
+                
+                if (clone.frozen && now > clone.frozenEndTime) {
+                    clone.frozen = false;
+                    if (clone.originalSpeed) {
+                        clone.speed = clone.originalSpeed;
+                    }
+                }
+            }
+            
+            // Update fire effects
+            for (let i = fireEffects.length - 1; i >= 0; i--) {
+                fireEffects[i].life--;
+                fireEffects[i].alpha = fireEffects[i].life / 20;
+                if (fireEffects[i].life <= 0) fireEffects.splice(i, 1);
+            }
+            
+            // Update ice effects
+            for (let i = iceEffects.length - 1; i >= 0; i--) {
+                iceEffects[i].life--;
+                iceEffects[i].alpha = iceEffects[i].life / 20;
+                if (iceEffects[i].life <= 0) iceEffects.splice(i, 1);
             }
         }
 
-        function playShotgunSound() {
+        function createHitEffect(x, y) {
+            if (gameState.currentWeapon === 'shotgun') {
+                bloodSplatters.push({x, y, size: 8 + Math.random() * 12, alpha: 1});
+            } else if (gameState.currentWeapon === 'fire') {
+                fireEffects.push({x, y, alpha: 1, life: 20});
+            } else if (gameState.currentWeapon === 'ice') {
+                iceEffects.push({x, y, alpha: 1, life: 20});
+            }
+        }
+
+        function playWeaponSound(weapon) {
             try {
                 const ac = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ac.createOscillator(), gain = ac.createGain();
                 osc.connect(gain);
                 gain.connect(ac.destination);
-                osc.frequency.setValueAtTime(120, ac.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.3, ac.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.3);
-                osc.start(ac.currentTime);
-                osc.stop(ac.currentTime + 0.3);
+                
+                if (weapon === 'shotgun') {
+                    osc.frequency.setValueAtTime(120, ac.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, ac.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.3);
+                    osc.start(ac.currentTime);
+                    osc.stop(ac.currentTime + 0.3);
+                } else if (weapon === 'fire') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, ac.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, ac.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.2, ac.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.2);
+                    osc.start(ac.currentTime);
+                    osc.stop(ac.currentTime + 0.2);
+                } else if (weapon === 'ice') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, ac.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, ac.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.2, ac.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.15);
+                    osc.start(ac.currentTime);
+                    osc.stop(ac.currentTime + 0.15);
+                }
             } catch(e) {}
         }
 
         function updateHUD() {
             document.getElementById('stage').textContent = gameState.stage;
-            document.getElementById('zombies-left').textContent = gameState.zombiesLeft;
+            document.getElementById('zombies-left').textContent = gameState.zombiesRemaining;
             document.getElementById('zombies-killed').textContent = gameState.zombiesKilled;
             document.getElementById('ammo-count').textContent = gameState.playerAmmo;
             document.getElementById('start-stage').textContent = gameState.stage;
@@ -2575,48 +2490,49 @@
                 return;
             }
             
-            // Award one extra life for completing stage (max 5 lives)
             if (gameState.playerLives < 5) {
                 gameState.playerLives++;
             }
             
-            // Hide stage complete screen
-            document.getElementById('stage-complete-screen').classList.add('hidden');
-            
-            // Play cutscene for stages 2-5, otherwise start immediately
-            if (gameState.stage >= 2 && gameState.stage <= 5) {
-                playCutscene('stage', gameState.stage);
-            } else {
-                // No cutscene for stages 6-10, start immediately
-                startStageDirectly();
-            }
-            
-            // Save progress
-            saveGame();
-        }
-        
-        function startStageDirectly() {
-            // Setup stage without cutscene
-            gameState.zombiesLeft = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+            gameState.zombiesRemaining = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
+            gameState.zombiesToSpawn = CONFIG.ZOMBIES_PER_STAGE[gameState.stage - 1];
             gameState.zombiesKilled = 0;
             zombies.length = 0;
             ammoPacks.length = 0;
             bulletTraces.length = 0;
             bloodSplatters.length = 0;
             bosses.length = 0;
+            bossClones.length = 0;
+            activePortal = null;
             gameState.bossActive = false;
             gameState.bossPlayedSound = false;
+            gameState.portalActive = false;
+            gameState.portalDestroyed = false;
             
-            spawnInitialZombies();
-            spawnHiddenAmmo();
-            spawnBoss();  // Spawn boss(es) on every stage
-            
+            document.getElementById('stage-complete-screen').classList.add('hidden');
             gameState.stageComplete = false;
-            gameState.gameRunning = true;
             updateLivesDisplay();
             
-            // Play new stage music
-            playStageMusic(gameState.stage);
+            // Play cutscene for stages 2 and 3
+            if (gameState.stage === 2 || gameState.stage === 3) {
+                playCutscene(() => {
+                    spawnInitialZombies();
+                    spawnHiddenAmmo();
+                    spawnBoss();
+                    createPortal(); // Create portal for new stage
+                    gameState.gameRunning = true;
+                    playStageMusic(gameState.stage);
+                    saveGame();
+                });
+            } else {
+                spawnInitialZombies();
+                spawnHiddenAmmo();
+                spawnBoss();
+                createPortal(); // Create portal for new stage
+                gameState.gameRunning = true;
+                playStageMusic(gameState.stage);
+                saveGame();
+            }
         }
 
         function gameOver() {
@@ -2629,28 +2545,14 @@
             document.getElementById('game-over-screen').classList.remove('hidden');
         }
 
-        function applyDifficulty(difficulty) {
-            gameState.difficulty = difficulty;
-            const preset = DIFFICULTY_PRESETS[difficulty];
-            
-            // Apply difficulty settings
-            CONFIG.ZOMBIE_SPEED_MIN = preset.ZOMBIE_SPEED_MIN;
-            CONFIG.ZOMBIE_SPEED_MAX = preset.ZOMBIE_SPEED_MAX;
-            CONFIG.BOSS_SPEED = preset.BOSS_SPEED;
-            ACID_CONFIG.RANGE = preset.ACID_RANGE;
-            CONFIG.STARTING_LIVES = preset.STARTING_LIVES;
-            
-            // Update lives display
-            gameState.playerLives = preset.STARTING_LIVES;
-        }
-        
         function restartGame() {
             stopStageMusic();
-            clearSave();  // Clear save on restart
+            clearSave();
             gameState = {
                 stage: 1,
                 zombiesKilled: 0,
-                zombiesLeft: CONFIG.ZOMBIES_PER_STAGE[0],
+                zombiesRemaining: CONFIG.ZOMBIES_PER_STAGE[0],
+                zombiesToSpawn: CONFIG.ZOMBIES_PER_STAGE[0],
                 playerLives: CONFIG.STARTING_LIVES,
                 playerAmmo: CONFIG.STARTING_AMMO,
                 totalAmmoCollected: 0,
@@ -2663,7 +2565,10 @@
                 isInvincible: false,
                 bossActive: false,
                 bossPlayedSound: false,
-                isPaused: false
+                isPaused: false,
+                portalActive: false,
+                portalDestroyed: false,
+                currentWeapon: 'shotgun'
             };
             player.x = CONFIG.CANVAS_WIDTH / 2;
             player.y = CONFIG.CANVAS_HEIGHT / 2;
@@ -2672,11 +2577,8 @@
             bulletTraces.length = 0;
             bloodSplatters.length = 0;
             bosses.length = 0;
-            
-            initBuildings();
-            spawnInitialZombies();
-            spawnHiddenAmmo();
-            spawnBoss();
+            bossClones.length = 0;
+            activePortal = null;
             
             document.getElementById('game-over-screen').classList.add('hidden');
             document.getElementById('stage-complete-screen').classList.add('hidden');
